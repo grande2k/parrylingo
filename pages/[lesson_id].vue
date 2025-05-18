@@ -1,0 +1,3 @@
+<template>
+	<lessons-single />
+</template>

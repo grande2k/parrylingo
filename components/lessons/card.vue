@@ -1,5 +1,5 @@
 <template>
-	<article class="relative rounded-2xl border border-gray-300 pt-12 overflow-hidden">
+	<article class="relative rounded-2xl border border-gray-300 overflow-hidden">
 		<div class="flex gap-2 absolute z-10 right-2 top-2">
 			<UButton
 				size="md"
@@ -19,6 +19,11 @@
 			>
 				<IconShare class="!size-4" />
 			</UButton>
+		</div>
+
+		<div class="grid grid-cols-2 gap-4 p-2">
+			<PuzzleMask :imageUrl="lesson.words[0].image" class="size-14 mx-auto" />
+			<PuzzleMask direction="right" :imageUrl="lesson.words[0].image" class="size-14 mx-auto" />
 		</div>
 
 		<p class="bg-secondary py-1 px-2 text-center text-white">
