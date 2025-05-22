@@ -1,27 +1,21 @@
 <template>
-	<article class="relative rounded-2xl border border-gray-300 overflow-hidden">
-		<div class="flex gap-2 absolute z-10 right-2 top-2">
-			<UButton
-				size="md"
-				:color="isFav ? 'secondary' : 'neutral'"
-				:variant="isFav ? 'solid' : 'subtle'"
-				class="cursor-pointer size-8 p-0 flex items-center justify-center"
-				@click="addLessonToFavourites"
-			>
-				<IconHeart class="!size-4" :fill="isFav ? '#fff' : 'none'" />
-			</UButton>
+	<article class="relative rounded-2xl border border-gray-300 overflow-hidden cursor-pointer">
+		<button
+			class="absolute left-1/2 -translate-x-1/2 z-20 cursor-pointer w-8 h-9 flex pt-2 justify-center fav-btn"
+			:class="isFav ? 'bg-secondary' : 'bg-gray-400'"
+			@click.stop="addLessonToFavourites"
+		>
+			<IconPlus class="!size-4" stroke="#fff" />
+		</button>
 
-			<UButton
-				color="neutral"
-				variant="subtle"
-				class="cursor-pointer size-8 p-0 flex items-center justify-center"
-				@click="share"
-			>
-				<IconShare class="!size-4" />
-			</UButton>
-		</div>
+		<button
+			class="absolute right-1 top-1 z-20 bg-gray-200 border border-gray-500 rounded-full cursor-pointer size-8 flex items-center justify-center"
+			@click.stop="share"
+		>
+			<IconShare class="!size-4" />
+		</button>
 
-		<div class="grid grid-cols-2 gap-4 p-2">
+		<div class="grid grid-cols-2 gap-4 p-2 relative z-10">
 			<PuzzleMask :imageUrl="lesson.words[0].image" class="size-14 mx-auto" />
 			<PuzzleMask direction="right" :imageUrl="lesson.words[0].image" class="size-14 mx-auto" />
 		</div>
@@ -34,9 +28,9 @@
 			<div
 				v-for="word in [lesson.words[0], lesson.words[1]]"
 				:key="word.id"
-				class="flex items-center justify-center first:border-r border-gray-300"
+				class="flex items-center justify-center first:border-r border-gray-300 p-3"
 			>
-				<img :src="word.image" class="w-24 h-24 object-contain" alt="" />
+				<img :src="getStaticUrl(word.image)" class="w-24 h-24 object-contain" alt="" />
 			</div>
 		</div>
 	</article>
@@ -48,8 +42,12 @@ const props = defineProps({
 });
 
 const lessonInfo = computed(() => {
-	const authorFullName = `${props.lesson.author?.first_name} ${props.lesson.author?.last_name}`;
-	return `${authorFullName} / ${props.lesson.language?.name}`;
+	if (props.lesson.author) {
+		const authorFullName = `${props.lesson.author?.first_name} ${props.lesson.author?.last_name}`;
+		return `${authorFullName} / ${props.lesson.language?.name}`;
+	} else {
+		return props.lesson.language?.name;
+	}
 });
 
 const { isFavourite, toggleFavourite } = useFavourites();
@@ -62,3 +60,9 @@ const addLessonToFavourites = () => {
 
 const share = () => {};
 </script>
+
+<style scoped>
+.fav-btn {
+	clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 85%, 0% 100%);
+}
+</style>

@@ -16,19 +16,22 @@
 </template>
 
 <script setup>
+const lessonsStore = useLessonsStore();
 const route = useRoute();
-
-await useFetch("/api/lessons", { key: "lessons" });
-
-const { data } = useNuxtData("lessons");
 
 const { favourites } = useFavourites();
 
 const isFavourites = computed(() => route.name === "favourites");
 
-const lessons = computed(() => {
-	if (!data.value) return [];
+onMounted(async () => {
+	lessonsStore.fetchLessons();
+});
 
-	return isFavourites.value ? data.value.filter(lesson => favourites.value.includes(lesson.id)) : data.value;
+const lessons = computed(() => {
+	if (!lessonsStore.lessons) return [];
+
+	return isFavourites.value
+		? lessonsStore.lessons.filter(lesson => favourites.value.includes(lesson.id))
+		: lessonsStore.lessons;
 });
 </script>
