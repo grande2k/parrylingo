@@ -37,3 +37,25 @@
 	--font-sans: "Poppins", sans-serif;
 	--text-base: 16px;
 }
+
+@layer components {
+	.btn-answer {
+		@apply border-4 rounded-2xl flex items-center justify-center overflow-hidden aspect-square cursor-pointer transition-transform duration-200;
+	}
+
+	.btn-answer.zoom {
+		@apply scale-95;
+	}
+
+	.btn-border-correct {
+		@apply border-green-500;
+	}
+
+	.btn-border-wrong {
+		@apply border-red-500;
+	}
+
+	.btn-border-default {
+		@apply border-gray-400;
+	}
+}

@@ -1,11 +1,19 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import { useRoute } from "vue-router";
 
 export const useLessonsStore = defineStore("lessons", () => {
 	const lessons = ref(null);
+	const loading = ref(true);
+	const route = useRoute();
 
 	const fetchLessons = async () => {
-		const { data, error } = await useAPI("/lessons");
+		loading.value = true;
+
+		const lang_id = route.name === "index" ? localStorage.getItem("language_id") : null;
+		const { data, error } = await useAPI(lang_id ? `/lessons?language_id=${lang_id}` : "/lessons");
+
+		loading.value = false;
 
 		if (error.value) {
 			console.error("Error fetching lessons");
@@ -14,5 +22,5 @@ export const useLessonsStore = defineStore("lessons", () => {
 		}
 	};
 
-	return { lessons, fetchLessons };
+	return { lessons, loading, fetchLessons };
 });

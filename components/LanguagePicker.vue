@@ -4,18 +4,16 @@
 
 		<div class="relative w-48">
 			<select
-				v-model="currentLangName"
+				v-model="currentLanguage"
 				class="block w-full appearance-none rounded-md border border-gray-300 bg-white px-4 py-2 pr-10 text-sm shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
 			>
-				<option disabled value="">Select language</option>
-				<option v-for="item in languages" :key="item.id" :value="item.name">
+				<option v-if="!currentLanguage" disabled value="">Select language</option>
+				<option v-for="item in languages" :key="item.id" :value="item.id">
 					{{ item.name }}
 				</option>
 			</select>
 
-			<div
-				class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 transition-transform duration-200"
-			>
+			<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
 				<IconArrowDown />
 			</div>
 		</div>
@@ -23,24 +21,36 @@
 </template>
 
 <script setup>
-await useFetch("/api/languages", { key: "languages" });
+const lessonsStore = useLessonsStore();
 
-const { data: languages } = useNuxtData("languages");
+const languages = ref([]);
+const currentLanguage = ref("");
 
-const showLanguages = computed(() => languages.value && languages.value.length);
-const currentLangName = computed(() => languages.value.find(lang => lang.id === currentLanguage.value)?.name);
+const showLanguages = computed(() => languages.value.length > 0);
 
-const currentLanguage = ref(null);
+const fetchLanguages = async () => {
+	const { data, error } = await useAPI("/languages");
 
-onMounted(() => {
-	currentLanguage.value = localStorage.getItem("language_id") ?? languages.value?.[0]?.id;
-});
+	if (error.value) {
+		console.error("Error fetching languages");
+	} else {
+		languages.value = data.value;
 
-watch(currentLanguage, (newLang, oldLang) => {
-	if (newLang && newLang !== oldLang) {
+		const saved = localStorage.getItem("language_id");
+		const found = data.value.find(lang => lang.id === saved);
+
+		currentLanguage.value = found?.id || data.value[0]?.id;
+	}
+};
+
+watch(currentLanguage, newLang => {
+	if (newLang) {
 		localStorage.setItem("language_id", newLang);
+		lessonsStore.fetchLessons();
 	}
 });
+
+onMounted(fetchLanguages);
 </script>
 
 <style scoped>

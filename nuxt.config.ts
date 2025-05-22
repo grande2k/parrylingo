@@ -6,6 +6,6 @@ export default defineNuxtConfig({
 	css: ["~/assets/css/main.css"],
 	colorMode: { preference: "light" },
 	runtimeConfig: {
-		public: { apiBaseUrl: process.env.API_BASE_URL, staticBaseUrl: process.env.STATIC_BASE_URL },
+		public: { apiBaseUrl: process.env.API_BASE_URL, mediaBaseUrl: process.env.MEDIA_BASE_URL },
 	},
 });

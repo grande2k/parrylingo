@@ -4,7 +4,7 @@
 			<img :src="resultImagePath" alt="Результат" class="mx-auto w-[320px] scale-110 h-auto" />
 
 			<button
-				class="bg-secondary absolute -bottom-7 left-1/2 -translate-x-1/2 text-white size-16 text-xl rounded-full font-semibold cursor-pointer"
+				class="bg-secondary absolute -bottom-7 left-1/2 -translate-x-1/2 text-white size-20 text-2xl rounded-full font-semibold cursor-pointer leading-none"
 				@click="close"
 			>
 				OK
@@ -14,9 +14,7 @@
 </template>
 
 <script setup>
-import { useSingleLessonStore } from "~/stores/single-lesson";
-import { computed } from "vue";
-
+const router = useRouter();
 const emit = defineEmits(["close"]);
 const singleLessonStore = useSingleLessonStore();
 
@@ -28,5 +26,7 @@ const resultImagePath = computed(() => {
 
 const close = () => {
 	emit("close");
+	singleLessonStore.resetLesson();
+	router.push("/");
 };
 </script>

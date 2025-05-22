@@ -1,8 +1,10 @@
 <template>
 	<section class="lessons">
-		<language-picker />
+		<language-picker v-if="route.name === 'index'" />
 
-		<div v-if="lessons.length" class="grid grid-cols-4 gap-3 mt-6">
+		<LoadingSpinner v-if="lessonsStore.loading" class="mx-auto mt-24" />
+
+		<div v-if="lessons.length && !lessonsStore.loading" class="grid grid-cols-4 gap-3 mt-6">
 			<lessons-card
 				v-for="lesson in lessons"
 				:key="lesson.id"
@@ -11,7 +13,7 @@
 			/>
 		</div>
 
-		<p v-else class="mt-4">No lessons</p>
+		<p v-else-if="!lessonsStore.loading && !lessons?.length" class="mt-12 text-center">No lessons</p>
 	</section>
 </template>
 
@@ -23,7 +25,7 @@ const { favourites } = useFavourites();
 
 const isFavourites = computed(() => route.name === "favourites");
 
-onMounted(async () => {
+onMounted(() => {
 	lessonsStore.fetchLessons();
 });
 

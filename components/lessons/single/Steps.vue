@@ -3,7 +3,7 @@
 		<div
 			v-for="step in 4"
 			:key="step"
-			class="size-12 bg-dark-gray text-white rounded-full cursor-pointer flex items-center justify-center"
+			class="size-12 bg-dark-gray text-white leading-none rounded-full flex items-center justify-center"
 			:class="{
 				'bg-secondary': singleLessonStore.stepsStatus[step - 1] === 'correct',
 				'bg-red-500': singleLessonStore.stepsStatus[step - 1] === 'wrong',

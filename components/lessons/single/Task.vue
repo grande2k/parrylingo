@@ -22,14 +22,21 @@
 		>
 			{{ currentWord.title }}
 		</div>
+
+		<button
+			class="absolute -right-5 -bottom-5 flex items-center justify-center bg-gray-600 rounded-full text-lg text-white size-12 cursor-pointer transition hover:bg-gray-800"
+			@click="singleLessonStore.playAudio()"
+		>
+			<IconSound />
+		</button>
 	</div>
 
 	<div class="grid grid-cols-2 gap-4 mt-10">
 		<button
 			v-for="word in singleLessonStore.shuffledWords"
 			:key="word.id"
-			class="border-4 border-gray-400 rounded-2xl flex items-center justify-center overflow-hidden aspect-square cursor-pointer"
 			@click="selectAnswer(word)"
+			:class="['btn-answer', selectedWordId === word.id ? 'zoom' : '', getBorderClass(word.id)]"
 		>
 			<img :src="getStaticUrl(word.image)" class="size-42 object-contain" alt="" />
 		</button>
@@ -43,6 +50,8 @@ import { useSingleLessonStore } from "~/stores/single-lesson";
 
 const singleLessonStore = useSingleLessonStore();
 
+const selectedWordId = ref(null);
+
 const showResultModal = ref(false);
 
 const currentWord = computed(() => {
@@ -54,14 +63,31 @@ const currentWord = computed(() => {
 });
 
 const selectAnswer = answer => {
-	const isCorrect = answer.title === currentWord.value.title;
-	singleLessonStore.stepsStatus[singleLessonStore.current_step - 1] = isCorrect ? "correct" : "wrong";
+	selectedWordId.value = answer.id;
 
-	if (singleLessonStore.current_step === 4) {
-		showResultModal.value = true;
-	} else {
-		singleLessonStore.current_step += 1;
-		singleLessonStore.shuffleWords();
-	}
+	setTimeout(() => {
+		selectedWordId.value = null;
+
+		setTimeout(() => {
+			const isCorrect = answer.title === currentWord.value.title;
+			singleLessonStore.stepsStatus[singleLessonStore.current_step - 1] = isCorrect ? "correct" : "wrong";
+
+			if (singleLessonStore.current_step === 4) {
+				showResultModal.value = true;
+			} else {
+				singleLessonStore.current_step += 1;
+				singleLessonStore.shuffleWords();
+			}
+		}, 200);
+	}, 200);
+};
+
+const getBorderClass = wordId => {
+	const status = singleLessonStore.stepsStatus[singleLessonStore.current_step - 1];
+	if (selectedWordId.value !== wordId) return "btn-border-default";
+
+	if (status === "correct") return "btn-border-correct";
+	if (status === "wrong") return "btn-border-wrong";
+	return "btn-border-default";
 };
 </script>
