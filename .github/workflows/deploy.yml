@@ -21,26 +21,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
-          cache: 'pnpm'
-
-      - name: Enable Corepack & activate pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@latest --activate
-
-      - name: Verify pnpm
-        run: |
-          echo "pnpm path: $(which pnpm)"
-          pnpm --version
+          node-version: '22'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: pnpm install
+        run: npm ci
 
       - name: Build Nuxt & generate
         run: |
-          pnpm run build
-          pnpm run generate
+          npm run build
+          npm run generate
 
       - name: Archive build artifacts
         run: |
@@ -53,7 +43,6 @@ jobs:
             ls -R .
             exit 1
           fi
-          echo "📦 Архивируем папку $SRC"
           tar -czf site.tar.gz -C "$SRC" .
 
       - name: Deploy to server
