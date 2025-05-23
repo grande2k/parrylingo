@@ -9,7 +9,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    # Если ваш Nuxt-проект лежит в подпапке — поправьте путь.
+    # Если ваш Nuxt-проект лежит в подпапке — поправьте путь ниже
     defaults:
       run:
         working-directory: ./parrylingo
@@ -18,14 +18,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js & pnpm
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'pnpm'
 
-      - name: Enable Corepack (pnpm)
-        run: corepack enable
+      - name: Enable Corepack & activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Verify pnpm
+        run: |
+          echo "pnpm path: $(which pnpm)"
+          pnpm --version
 
       - name: Install dependencies
         run: pnpm install
@@ -37,7 +44,6 @@ jobs:
 
       - name: Archive build artifacts
         run: |
-          # выбираем каталог сборки
           if [ -d "dist" ]; then
             SRC="dist"
           elif [ -d ".output/public" ]; then
@@ -56,24 +62,20 @@ jobs:
           SSH_USER:        ${{ secrets.SSH_USER }}
           SSH_HOST:        ${{ secrets.SSH_HOST }}
         run: |
-          # кладём ключ и настраиваем SSH
           echo "$SSH_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
           trap "rm -f private_key.pem" EXIT
+
           mkdir -p ~/.ssh
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
 
-          # копируем архив на сервер
           scp -i private_key.pem site.tar.gz $SSH_USER@$SSH_HOST:/srv/parrylingo
 
-          # на сервере распаковываем в /srv/parrylingo и убираем старую сборку
           ssh -i private_key.pem $SSH_USER@$SSH_HOST bash -lc "
             set -e
             cd /srv/parrylingo
-            # резерв старой версии
             rm -rf site_old
             mv dist site_old 2>/dev/null || mv .output/public site_old 2>/dev/null || true
-            # распаковываем новый сайт
             tar -xzf site.tar.gz
             rm -f site.tar.gz
           "
