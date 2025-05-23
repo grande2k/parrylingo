@@ -9,11 +9,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    # Если ваш Nuxt-проект лежит в подпапке — поправьте путь ниже
-    defaults:
-      run:
-        working-directory: ./parrylingo
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -21,13 +16,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'
+          node-version: '18'
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Build Nuxt & generate
+      - name: Build & generate
         run: |
           npm run build
           npm run generate
@@ -39,7 +34,7 @@ jobs:
           elif [ -d ".output/public" ]; then
             SRC=".output/public"
           else
-            echo "❌ Не найдена папка сборки (dist или .output/public)"
+            echo "❌ build folder not found"
             ls -R .
             exit 1
           fi
