@@ -40,6 +40,6 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd /srv/nuxt-app
+            cd /srv/parrylingo
             npm install --omit=dev
-            pm2 reload ecosystem.config.js || pm2 start .output/server/index.mjs --name nuxt-app
+            pm2 reload ecosystem.config.js || pm2 start .output/server/index.mjs --name parrylingo
