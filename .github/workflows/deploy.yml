@@ -30,10 +30,11 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: ".output"
-          target: "/srv/nuxt-app/"
+          source: "."
+          target: "/srv/parrylingo/"
+          strip_components: 1
 
-      - name: Restart app on server
+      - name: Restart Nuxt SSR on server
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -41,5 +42,9 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /srv/parrylingo
+            pm2 delete parrylingo || true
+            rm -rf node_modules .output
             npm install --omit=dev
-            pm2 reload ecosystem.config.js || pm2 start .output/server/index.mjs --name parrylingo
+            npm run build
+            pm2 start .output/server/index.mjs --name parrylingo
+            pm2 save
