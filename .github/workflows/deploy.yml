@@ -1,4 +1,4 @@
-name: Deploy Nuxt 3 WebApp
+name: Deploy Nuxt SSR App
 
 on:
   push:
@@ -6,60 +6,40 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: '20'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
-      - name: Build & generate
-        run: |
-          npm run build
-          npm run generate
+      - name: Build for SSR
+        run: npm run build
 
-      - name: Archive build artifacts
-        run: |
-          if [ -d "dist" ]; then
-            SRC="dist"
-          elif [ -d ".output/public" ]; then
-            SRC=".output/public"
-          else
-            echo "❌ build folder not found"
-            ls -R .
-            exit 1
-          fi
-          tar -czf site.tar.gz -C "$SRC" .
+      - name: Upload to server via SSH
+        uses: appleboy/scp-action@v0.1.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: ".output"
+          target: "/srv/nuxt-app/"
 
-      - name: Deploy to server
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_USER:        ${{ secrets.SSH_USER }}
-          SSH_HOST:        ${{ secrets.SSH_HOST }}
-        run: |
-          echo "$SSH_PRIVATE_KEY" > private_key.pem
-          chmod 600 private_key.pem
-          trap "rm -f private_key.pem" EXIT
-
-          mkdir -p ~/.ssh
-          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
-
-          scp -i private_key.pem site.tar.gz $SSH_USER@$SSH_HOST:/srv/parrylingo
-
-          ssh -i private_key.pem $SSH_USER@$SSH_HOST bash -lc "
-            set -e
-            cd /srv/parrylingo
-            rm -rf site_old
-            mv dist site_old 2>/dev/null || mv .output/public site_old 2>/dev/null || true
-            tar -xzf site.tar.gz
-            rm -f site.tar.gz
-          "
+      - name: Restart app on server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /srv/nuxt-app
+            npm install --omit=dev
+            pm2 reload ecosystem.config.js || pm2 start .output/server/index.mjs --name nuxt-app
