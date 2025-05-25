@@ -2,7 +2,7 @@
 	<LoadingSpinner v-if="singleLessonStore.loading" class="mx-auto mt-24" />
 
 	<div v-if="singleLessonStore.lesson && !singleLessonStore.loading" class="max-w-[600px] mx-auto">
-		<div class="flex items-center justify-center gap-1 mb-6">
+		<div class="flex items-center justify-center gap-1 mb-4 sm:mb-6">
 			<p class="text-center underline underline-offset-4">{{ authorFullName }}</p>
 			<p class="text-center underline underline-offset-4">{{ singleLessonStore.lesson.language.name }}</p>
 		</div>

@@ -4,7 +4,7 @@
 
 		<LoadingSpinner v-if="lessonsStore.loading" class="mx-auto mt-24" />
 
-		<div v-if="lessons.length && !lessonsStore.loading" class="grid grid-cols-4 gap-3 mt-6">
+		<div v-if="lessons.length && !lessonsStore.loading" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6">
 			<lessons-card
 				v-for="lesson in lessons"
 				:key="lesson.id"

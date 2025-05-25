@@ -1,6 +1,6 @@
 <template>
 	<div v-if="showLanguages" class="flex justify-center items-center gap-4">
-		<p>Language to learn:</p>
+		<p class="text-sm sm:text-base">Language to learn:</p>
 
 		<div class="relative w-48">
 			<select

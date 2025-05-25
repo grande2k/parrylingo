@@ -1,26 +1,26 @@
 <template>
-	<article class="relative rounded-2xl border border-gray-300 overflow-hidden cursor-pointer">
+	<article class="relative rounded-xl sm:rounded-2xl border border-gray-300 overflow-hidden cursor-pointer">
 		<button
-			class="absolute left-1/2 -translate-x-1/2 z-20 cursor-pointer w-8 h-9 flex pt-2 justify-center fav-btn"
+			class="absolute left-1/2 -translate-x-1/2 z-20 cursor-pointer w-6 h-7 sm:w-8 sm:h-9 flex pt-1.5 sm:pt-2 justify-center fav-btn"
 			:class="isFav ? 'bg-secondary' : 'bg-gray-400'"
 			@click.stop="addLessonToFavourites"
 		>
-			<IconPlus class="!size-4" stroke="#fff" />
+			<IconPlus class="size-3 sm:size-4" stroke="#fff" />
 		</button>
 
 		<button
-			class="absolute right-1 top-1 z-20 bg-gray-200 border border-gray-500 rounded-full cursor-pointer size-8 flex items-center justify-center"
+			class="absolute right-1 top-1 z-20 bg-gray-200 border border-gray-500 rounded-full cursor-pointer size-7 sm:size-8 flex items-center justify-center"
 			@click.stop="share"
 		>
-			<IconShare class="!size-4" />
+			<IconShare class="size-3 sm:size-4" />
 		</button>
 
 		<div class="grid grid-cols-2 gap-4 p-2 relative z-10">
-			<PuzzleMask :imageUrl="lesson.words[0].image" class="size-14 mx-auto" />
-			<PuzzleMask direction="right" :imageUrl="lesson.words[0].image" class="size-14 mx-auto" />
+			<PuzzleMask :imageUrl="lesson.words[0].image" class="size-12 sm:size-14 mx-auto" />
+			<PuzzleMask direction="right" :imageUrl="lesson.words[0].image" class="size-12 sm:size-14 mx-auto" />
 		</div>
 
-		<p class="bg-secondary py-1 px-2 text-center text-white">
+		<p class="bg-secondary py-1 px-2 text-sm sm:text-base text-center text-white">
 			{{ lessonInfo }}
 		</p>
 
@@ -30,7 +30,7 @@
 				:key="word.id"
 				class="flex items-center justify-center first:border-r border-gray-300 p-3"
 			>
-				<img :src="getStaticUrl(word.image)" class="w-24 h-24 object-contain" alt="" />
+				<img :src="getStaticUrl(word.image)" class="size-16 sm:size-24 object-contain" alt="" />
 			</div>
 		</div>
 	</article>

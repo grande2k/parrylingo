@@ -4,27 +4,27 @@
 			<PuzzleMask
 				:imageUrl="getStaticUrl(currentWord.image)"
 				:empty="singleLessonStore.current_step > 2"
-				class="size-36 mx-auto"
+				class="size-24 sm:size-36 mx-auto"
 			/>
 
-			<span class="text-black text-6xl">+</span>
+			<span class="text-black text-4xl sm:text-6xl">+</span>
 
 			<PuzzleMask
 				direction="right"
 				:imageUrl="getStaticUrl(currentWord.image)"
 				:empty="singleLessonStore.current_step > 2"
-				class="size-36 mx-auto"
+				class="size-24 sm:size-36 mx-auto"
 			/>
 		</div>
 
 		<div
-			class="absolute left-1/2 -translate-x-1/2 -bottom-6 bg-secondary rounded-full text-lg tracking-wide text-white text-center w-[300px] p-2 font-bold mx-auto"
+			class="absolute left-1/2 -translate-x-1/2 -bottom-6 bg-secondary rounded-full text-lg tracking-wide text-white text-center w-[240px] sm:w-[300px] p-2 font-bold mx-auto"
 		>
 			{{ currentWord.title }}
 		</div>
 
 		<button
-			class="absolute -right-5 -bottom-5 flex items-center justify-center bg-gray-600 rounded-full text-lg text-white size-12 cursor-pointer transition hover:bg-gray-800"
+			class="absolute -right-4 sm:-right-5 -bottom-6 sm:-bottom-5 flex items-center justify-center bg-gray-600 rounded-full text-lg text-white size-12 cursor-pointer transition hover:bg-gray-800"
 			@click="singleLessonStore.playAudio()"
 		>
 			<IconSound />
@@ -38,20 +38,18 @@
 			@click="selectAnswer(word)"
 			:class="['btn-answer', selectedWordId === word.id ? 'zoom' : '', getBorderClass(word.id)]"
 		>
-			<img :src="getStaticUrl(word.image)" class="size-42 object-contain" alt="" />
+			<img :src="getStaticUrl(word.image)" class="size-32 sm:size-42 object-contain" alt="" />
 		</button>
 	</div>
 
-	<LessonsSingleResult v-if="showResultModal" @close="showResultModal = false" />
+	<LessonsSingleResult :open="showResultModal" @close="showResultModal = false" />
 </template>
 
 <script setup>
-import { useSingleLessonStore } from "~/stores/single-lesson";
-
 const singleLessonStore = useSingleLessonStore();
 
 const selectedWordId = ref(null);
-
+const answerStatus = ref(null);
 const showResultModal = ref(false);
 
 const currentWord = computed(() => {
@@ -66,28 +64,32 @@ const selectAnswer = answer => {
 	selectedWordId.value = answer.id;
 
 	setTimeout(() => {
-		selectedWordId.value = null;
+		const isCorrect = answer.title === currentWord.value.title;
+		answerStatus.value = isCorrect ? "correct" : "wrong";
 
 		setTimeout(() => {
-			const isCorrect = answer.title === currentWord.value.title;
-			singleLessonStore.stepsStatus[singleLessonStore.current_step - 1] = isCorrect ? "correct" : "wrong";
+			singleLessonStore.stepsStatus[singleLessonStore.current_step - 1] = answerStatus.value;
+			selectedWordId.value = null;
+			answerStatus.value = null;
 
-			if (singleLessonStore.current_step === 4) {
-				showResultModal.value = true;
-			} else {
-				singleLessonStore.current_step += 1;
-				singleLessonStore.shuffleWords();
-			}
-		}, 200);
+			setTimeout(() => {
+				if (singleLessonStore.current_step === 4) {
+					showResultModal.value = true;
+				} else {
+					singleLessonStore.current_step += 1;
+					singleLessonStore.shuffleWords();
+				}
+			}, 200);
+		}, 400);
 	}, 200);
 };
 
 const getBorderClass = wordId => {
-	const status = singleLessonStore.stepsStatus[singleLessonStore.current_step - 1];
 	if (selectedWordId.value !== wordId) return "btn-border-default";
 
-	if (status === "correct") return "btn-border-correct";
-	if (status === "wrong") return "btn-border-wrong";
+	if (answerStatus.value === "correct") return "btn-border-correct";
+	if (answerStatus.value === "wrong") return "btn-border-wrong";
+
 	return "btn-border-default";
 };
 </script>
