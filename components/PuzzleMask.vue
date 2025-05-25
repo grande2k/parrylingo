@@ -1,6 +1,6 @@
 <template>
 	<div class="p-[2.5%] bg-gray-100" v-bind="$attrs">
-		<div class="puzzle-mask relative w-full h-full bg-white" :class="{ 'bg-gray-200': empty }">
+		<div class="puzzle-mask relative w-full h-full" :class="empty ? 'bg-gray-200' : 'bg-white'">
 			<img
 				v-if="!empty"
 				:src="fullImageUrl"

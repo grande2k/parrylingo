@@ -50,7 +50,11 @@ const lessonInfo = computed(() => {
 	}
 });
 
+const route = useRoute();
+
 const { isFavourite, toggleFavourite } = useFavourites();
+
+const { showToast } = useToast();
 
 const isFav = computed(() => isFavourite(props.lesson.id));
 
@@ -58,7 +62,26 @@ const addLessonToFavourites = () => {
 	toggleFavourite(props.lesson.id);
 };
 
-const share = () => {};
+const share = async () => {
+	const url = `${window.location.origin}/${props.lesson.id}`;
+
+	const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+	const canShare = !!navigator.share;
+
+	try {
+		if (isMobile && canShare) {
+			await navigator.share({
+				title: document.title,
+				url,
+			});
+		} else {
+			await navigator.clipboard.writeText(url);
+			showToast("Link copied to clipboard");
+		}
+	} catch (err) {
+		showToast("Error, link was not copied!");
+	}
+};
 </script>
 
 <style scoped>
