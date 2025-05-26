@@ -2,7 +2,7 @@ import { createApp, h, ref, nextTick } from "vue";
 import Toast from "~/components/Toast.vue";
 
 export const useToast = () => {
-	const showToast = (message, duration = 2000) => {
+	const showToast = (message, duration = 2000, color = "default") => {
 		const container = document.createElement("div");
 		document.body.appendChild(container);
 
@@ -22,6 +22,7 @@ export const useToast = () => {
 					h(Toast, {
 						message,
 						duration,
+						color,
 						visible: visible.value,
 						onClose: close,
 					});

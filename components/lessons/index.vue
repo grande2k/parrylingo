@@ -1,6 +1,6 @@
 <template>
 	<section class="lessons">
-		<language-picker v-if="route.name === 'index'" />
+		<language-picker />
 
 		<LoadingSpinner v-if="lessonsStore.loading" class="mx-auto mt-24" />
 
