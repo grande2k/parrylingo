@@ -1,8 +1,7 @@
 <template>
 	<header class="pb-4 sm:pb-6 mb-4 sm:mb-6 border-b-[3px] border-gray-200">
-		<div class="flex items-center justify-center gap-4 mb-6">
-			<img src="/images/logo.webp" width="56px" alt="" />
-			<h1 class="text-3xl font-black">ParryLingo</h1>
+		<div class="mb-6">
+			<img src="/images/logo.jpg" alt="" class="w-48 h-10 sm:w-72 sm:h-16 object-cover mx-auto" />
 		</div>
 
 		<nav>
