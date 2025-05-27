@@ -28,13 +28,17 @@
 <script setup>
 const props = defineProps({
 	open: Boolean,
+	stepsStatus: {
+		type: Array,
+		required: true,
+	},
+	isRoulette: Boolean,
 });
 
 const emit = defineEmits(["close"]);
 const router = useRouter();
-const singleLessonStore = useSingleLessonStore();
 
-const correctAnswers = computed(() => singleLessonStore.stepsStatus.filter(status => status === "correct").length);
+const correctAnswers = computed(() => props.stepsStatus.filter(status => status === "correct").length);
 
 const resultImagePath = computed(() => {
 	return `/images/results/result${correctAnswers.value}.png`;
@@ -42,7 +46,11 @@ const resultImagePath = computed(() => {
 
 const close = () => {
 	emit("close");
-	singleLessonStore.resetLesson();
+	if (props.isRoulette) {
+		useRouletteStore().reset();
+	} else {
+		useSingleLessonStore().resetLesson();
+	}
 	router.push("/");
 };
 </script>

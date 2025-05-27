@@ -1,5 +1,7 @@
 <template>
-	<article class="relative rounded-xl sm:rounded-2xl border border-gray-300 overflow-hidden cursor-pointer">
+	<article
+		class="relative flex flex-col rounded-xl sm:rounded-2xl border border-gray-300 overflow-hidden cursor-pointer"
+	>
 		<button
 			class="absolute left-1/2 -translate-x-1/2 z-20 cursor-pointer w-6 h-7 sm:w-8 sm:h-9 flex pt-1.5 sm:pt-2 justify-center fav-btn"
 			:class="isFav ? 'bg-secondary' : 'bg-gray-400'"
@@ -24,7 +26,7 @@
 			{{ lessonInfo }}
 		</p>
 
-		<div class="grid grid-cols-2">
+		<div class="grid grid-cols-2 flex-auto">
 			<div
 				v-for="word in [lesson.words[0], lesson.words[1]]"
 				:key="word.id"

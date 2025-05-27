@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
-// import { getStaticUrl } from "@/utils/getStaticUrl";
 
 export const useSingleLessonStore = defineStore("single-lesson", () => {
 	const lesson = ref(null);

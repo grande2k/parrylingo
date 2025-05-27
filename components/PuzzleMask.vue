@@ -27,19 +27,9 @@
 
 <script setup>
 const props = defineProps({
-	imageUrl: {
-		type: String,
-		required: true,
-	},
-	empty: {
-		type: Boolean,
-		required: false,
-	},
-	direction: {
-		type: String,
-		required: false,
-		default: "left",
-	},
+	imageUrl: String,
+	empty: Boolean,
+	direction: { type: String, required: false, default: "left" },
 });
 
 const fullImageUrl = computed(() => getStaticUrl(props.imageUrl));

@@ -42,7 +42,7 @@
 		</button>
 	</div>
 
-	<LessonsSingleResult :open="showResultModal" @close="showResultModal = false" />
+	<Result :open="showResultModal" :stepsStatus="singleLessonStore.stepsStatus" @close="showResultModal = false" />
 </template>
 
 <script setup>

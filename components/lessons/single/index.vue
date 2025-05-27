@@ -39,6 +39,7 @@ const startLesson = () => {
 };
 
 onMounted(async () => {
+	singleLessonStore.resetLesson();
 	await singleLessonStore.fetchSingleLesson();
 	showStart.value = true;
 });
