@@ -25,10 +25,6 @@ const { favourites } = useFavourites();
 
 const isFavourites = computed(() => route.name === "favourites");
 
-onMounted(() => {
-	lessonsStore.fetchLessons();
-});
-
 const lessons = computed(() => {
 	if (!lessonsStore.lessons) return [];
 

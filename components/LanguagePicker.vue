@@ -40,13 +40,25 @@ const fetchLanguages = async () => {
 		const found = data.value.find(lang => lang.id === saved);
 
 		currentLanguage.value = found?.id || data.value[0]?.id;
+
+		localStorage.setItem("language_id", currentLanguage.value);
+		await lessonsStore.fetchLessons();
 	}
 };
 
-watch(currentLanguage, newLang => {
-	if (newLang) {
+let initialized = false;
+
+watch(currentLanguage, async (newLang, oldLang) => {
+	if (!newLang) return;
+
+	if (!initialized) {
+		initialized = true;
+		return;
+	}
+
+	if (newLang !== oldLang) {
 		localStorage.setItem("language_id", newLang);
-		lessonsStore.fetchLessons();
+		await lessonsStore.fetchLessons();
 	}
 });
 

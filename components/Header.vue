@@ -5,9 +5,10 @@
 		</div>
 
 		<nav>
-			<ul class="flex items-center justify-center gap-8">
+			<ul class="flex items-start justify-center gap-8">
 				<li class="header-link">
 					<nuxt-link to="/">Lessons</nuxt-link>
+					<a href="https://look-at-english.com/" class="header-sublink">Old Lessons</a>
 				</li>
 				<li class="header-link">
 					<nuxt-link to="/favourites">Favourites</nuxt-link>
@@ -21,10 +22,18 @@
 @reference "@/assets/css/main.css";
 
 .header-link a {
-	@apply text-2xl text-black;
+	@apply underline;
+}
+
+.header-link a:not(.header-sublink) {
+	@apply text-2xl text-black font-semibold;
+}
+
+.header-sublink {
+	@apply text-sm block mt-1 font-semibold;
 }
 
 .header-link a.router-link-exact-active {
-	@apply text-primary;
+	@apply text-primary no-underline text-3xl leading-none;
 }
 </style>
