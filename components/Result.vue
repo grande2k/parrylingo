@@ -38,10 +38,24 @@ const props = defineProps({
 const emit = defineEmits(["close"]);
 const router = useRouter();
 
-const correctAnswers = computed(() => props.stepsStatus.filter(status => status === "correct").length);
-
 const resultImagePath = computed(() => {
-	return `/images/results/result${correctAnswers.value}.png`;
+	const correct = props.stepsStatus.filter(status => status === "correct").length;
+
+	if (props.stepsStatus.length === 18) {
+		const total = props.stepsStatus.length;
+		const percent = (correct / total) * 100;
+
+		let score = 1;
+		if (percent >= 75) score = 4;
+		else if (percent >= 50) score = 3;
+		else if (percent >= 25) score = 2;
+
+		return `/images/results/result${score}.png`;
+	} else if (props.stepsStatus.length === 4) {
+		return `/images/results/result${correct}.png`;
+	} else {
+		return "/images/results/result0.png";
+	}
 });
 
 const close = () => {
