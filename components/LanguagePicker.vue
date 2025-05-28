@@ -29,7 +29,7 @@ const currentLanguage = ref("");
 const showLanguages = computed(() => languages.value.length > 0);
 
 const fetchLanguages = async () => {
-	const { data, error } = await useAPI("/languages");
+	const { data, error } = await useAPI("/languages?with_lessons=true");
 
 	if (error.value) {
 		console.error("Error fetching languages");
