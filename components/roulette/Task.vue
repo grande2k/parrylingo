@@ -1,21 +1,41 @@
 <template>
 	<div class="relative border-4 border-gray-400 rounded-2xl p-6">
 		<div class="flex items-center gap-4 mb-4">
-			<PuzzleMask empty class="size-24 sm:size-36 mx-auto" />
+			<PuzzleMask empty class="size-24 sm:size-36 mx-auto select-none" />
 
-			<span class="text-black text-4xl sm:text-6xl">+</span>
+			<span class="text-black text-4xl sm:text-6xl select-none">+</span>
 
-			<PuzzleMask direction="right" empty class="size-24 sm:size-36 mx-auto" />
+			<PuzzleMask direction="right" empty class="size-24 sm:size-36 mx-auto select-none" />
 		</div>
 
 		<div
-			class="absolute left-1/2 -translate-x-1/2 -bottom-6 bg-secondary rounded-full text-lg tracking-wide text-white text-center w-[300px] p-2 font-bold mx-auto"
+			ref="draggable"
+			class="bg-secondary rounded-full text-2xl tracking-wide text-white text-center w-[240px] sm:w-[300px] py-4 px-2 font-bold mx-auto touch-none select-none"
+			:class="{ 'cursor-grab': !dragDisabled }"
+			:style="
+				dragging
+					? {
+							position: 'fixed',
+							top: `${position.y}px`,
+							left: `${position.x}px`,
+							transform: 'translate(-50%, -50%)',
+							zIndex: 50,
+					  }
+					: {
+							position: 'absolute',
+							left: '50%',
+							bottom: '-2rem',
+							transform: 'translateX(-50%)',
+					  }
+			"
+			@mousedown="startDrag"
+			@touchstart="startDrag"
 		>
 			{{ currentWord.title }}
 		</div>
 
 		<button
-			class="absolute -right-5 -bottom-5 flex items-center justify-center bg-gray-600 rounded-full text-lg text-white size-12 cursor-pointer transition hover:bg-gray-800"
+			class="absolute -right-4 sm:-right-5 -bottom-6 sm:-bottom-5 flex items-center justify-center bg-gray-600 rounded-full text-lg text-white size-12 select-none cursor-pointer transition hover:bg-gray-800"
 			@click="rouletteStore.playAudio()"
 		>
 			<IconSound />
@@ -27,9 +47,10 @@
 			v-for="word in rouletteStore.shuffledWords"
 			:key="word.id"
 			@click="selectAnswer(word)"
+			:disabled="isAnswerProcessing"
 			:class="['btn-answer', selectedWordId === word.id ? 'zoom' : '', getBorderClass(word.id)]"
 		>
-			<img :src="getStaticUrl(word.image)" class="size-42 object-contain" alt="" />
+			<img :src="getStaticUrl(word.image)" class="size-32 sm:size-42 object-contain select-none" alt="" />
 		</button>
 	</div>
 
@@ -46,6 +67,7 @@ const rouletteStore = useRouletteStore();
 const selectedWordId = ref(null);
 const answerStatus = ref(null);
 const showResultModal = ref(false);
+const isAnswerProcessing = ref(false);
 
 const total = computed(() => rouletteStore.stepsStatus.length);
 
@@ -54,6 +76,8 @@ const currentWord = computed(() => {
 });
 
 const selectAnswer = answer => {
+	if (isAnswerProcessing.value) return;
+	isAnswerProcessing.value = true;
 	selectedWordId.value = answer.id;
 
 	setTimeout(() => {
@@ -72,9 +96,82 @@ const selectAnswer = answer => {
 					rouletteStore.current_step += 1;
 					rouletteStore.shuffle();
 				}
+				isAnswerProcessing.value = false;
+				stopDragging();
 			}, 200);
 		}, 400);
 	}, 200);
+};
+
+const draggable = ref(null);
+const dragging = ref(false);
+const dragDisabled = ref(false);
+const position = reactive({ x: 0, y: 0 });
+
+const getTouchOrMouseEvent = e => {
+	if (e.touches && e.touches[0]) return e.touches[0];
+	if (e.changedTouches && e.changedTouches[0]) return e.changedTouches[0];
+	return e;
+};
+
+const startDrag = e => {
+	if (dragDisabled.value) return;
+
+	const event = getTouchOrMouseEvent(e);
+	dragging.value = true;
+
+	position.x = event.clientX;
+	position.y = event.clientY;
+
+	document.addEventListener("mousemove", onDrag);
+	document.addEventListener("mouseup", endDrag);
+	document.addEventListener("touchmove", onDrag);
+	document.addEventListener("touchend", endDrag);
+};
+
+const onDrag = e => {
+	if (!dragging.value || dragDisabled.value) return;
+	const event = getTouchOrMouseEvent(e);
+
+	position.x = event.clientX;
+	position.y = event.clientY;
+};
+
+const endDrag = e => {
+	if (!dragging.value) return;
+
+	const event = getTouchOrMouseEvent(e);
+	const dropX = event.clientX;
+	const dropY = event.clientY;
+
+	const buttons = document.querySelectorAll(".btn-answer");
+	let droppedOnAnswer = false;
+
+	for (const btn of buttons) {
+		const rect = btn.getBoundingClientRect();
+		if (dropX >= rect.left && dropX <= rect.right && dropY >= rect.top && dropY <= rect.bottom) {
+			const img = btn.querySelector("img");
+			const word = rouletteStore.shuffledWords.find(w => getStaticUrl(w.image) === img?.getAttribute("src"));
+			if (word) {
+				selectAnswer(word);
+				droppedOnAnswer = true;
+				break;
+			}
+		}
+	}
+
+	dragDisabled.value = true;
+
+	if (!droppedOnAnswer) stopDragging();
+};
+
+const stopDragging = () => {
+	dragging.value = false;
+	dragDisabled.value = false;
+	document.removeEventListener("mousemove", onDrag);
+	document.removeEventListener("mouseup", endDrag);
+	document.removeEventListener("touchmove", onDrag);
+	document.removeEventListener("touchend", endDrag);
 };
 
 const getBorderClass = wordId => {

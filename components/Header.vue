@@ -1,7 +1,7 @@
 <template>
 	<header class="pb-4 sm:pb-6 mb-4 sm:mb-6 border-b-[3px] border-gray-200">
 		<div class="mb-6">
-			<img src="/images/logo.jpg" alt="" class="w-48 h-10 sm:w-72 sm:h-16 object-cover mx-auto" />
+			<img src="/images/logo.jpg" alt="" class="w-64 sm:w-48 h-10 sm:w-72 sm:h-16 object-cover mx-auto" />
 		</div>
 
 		<nav>
