@@ -33,6 +33,10 @@ export const useSingleLessonStore = defineStore("single-lesson", () => {
 	};
 
 	const playAudio = async () => {
+		const isSoundDisabled = localStorage.getItem("lesson_sound_disabled") === "true";
+
+		if (isSoundDisabled) return;
+
 		try {
 			if (!audio.value || !audio.value.src) {
 				console.warn("Audio is not ready to play");

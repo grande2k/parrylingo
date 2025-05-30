@@ -1,5 +1,5 @@
 <template>
-	<div class="relative border-4 border-gray-400 rounded-2xl p-6">
+	<div class="relative border-4 border-gray-400 rounded-2xl p-6 pb-8">
 		<div class="flex items-center gap-4 mb-4">
 			<PuzzleMask empty class="size-24 sm:size-36 mx-auto select-none" />
 
@@ -10,7 +10,7 @@
 
 		<div
 			ref="draggable"
-			class="bg-secondary rounded-full text-2xl tracking-wide text-white text-center w-[240px] sm:w-[300px] py-4 px-2 font-bold mx-auto touch-none select-none"
+			class="relative bg-secondary border-6 border-white rounded-full text-xl sm:text-2xl tracking-wide text-white text-center w-[280px] sm:w-[320px] py-4 px-2 font-bold mx-auto touch-none select-none"
 			:class="{ 'cursor-grab': !dragDisabled }"
 			:style="
 				dragging
@@ -24,7 +24,7 @@
 					: {
 							position: 'absolute',
 							left: '50%',
-							bottom: '-2rem',
+							bottom: '-2.5rem',
 							transform: 'translateX(-50%)',
 					  }
 			"
@@ -32,14 +32,17 @@
 			@touchstart="startDrag"
 		>
 			{{ currentWord.title }}
-		</div>
 
-		<button
-			class="absolute -right-4 sm:-right-5 -bottom-6 sm:-bottom-5 flex items-center justify-center bg-gray-600 rounded-full text-lg text-white size-12 select-none cursor-pointer transition hover:bg-gray-800"
-			@click="rouletteStore.playAudio()"
-		>
-			<IconSound />
-		</button>
+			<button
+				class="absolute right-0 top-0 size-15 sm:size-16 flex items-center justify-center border-4 border-white rounded-full text-white select-none"
+				:class="
+					isSoundDisabled ? 'bg-gray-400' : 'bg-secondary transition hover:bg-secondary/75 cursor-pointer'
+				"
+				@click="handlePlay"
+			>
+				<IconSound />
+			</button>
+		</div>
 	</div>
 
 	<div class="grid grid-cols-2 gap-4 mt-10">
@@ -63,6 +66,12 @@
 </template>
 
 <script setup>
+const emit = defineEmits(["play-muted"]);
+
+defineProps({
+	isSoundDisabled: Boolean,
+});
+
 const rouletteStore = useRouletteStore();
 const selectedWordId = ref(null);
 const answerStatus = ref(null);
@@ -103,6 +112,16 @@ const selectAnswer = answer => {
 	}, 200);
 };
 
+const handlePlay = () => {
+	const isSoundDisabled = localStorage.getItem("lesson_sound_disabled") === "true";
+
+	if (isSoundDisabled) {
+		emit("play-muted");
+	} else {
+		rouletteStore.playAudio();
+	}
+};
+
 const draggable = ref(null);
 const dragging = ref(false);
 const dragDisabled = ref(false);
@@ -115,6 +134,7 @@ const getTouchOrMouseEvent = e => {
 };
 
 const startDrag = e => {
+	if (e.target.tagName.toLowerCase() === "button" || e.target.closest("button")) return;
 	if (dragDisabled.value) return;
 
 	const event = getTouchOrMouseEvent(e);
