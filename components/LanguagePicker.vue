@@ -21,6 +21,9 @@
 </template>
 
 <script setup>
+const router = useRouter();
+const route = useRoute();
+
 const lessonsStore = useLessonsStore();
 
 const languages = ref([]);
@@ -36,13 +39,42 @@ const fetchLanguages = async () => {
 	} else {
 		languages.value = data.value;
 
+		const query = route.query.language_id;
 		const saved = localStorage.getItem("language_id");
-		const found = data.value.find(lang => lang.id === saved);
 
-		currentLanguage.value = found?.id || data.value[0]?.id;
+		let found;
 
-		localStorage.setItem("language_id", currentLanguage.value);
-		await lessonsStore.fetchLessons();
+		if (query) {
+			found = data.value.find(lang => lang.id === query);
+			currentLanguage.value = found?.id;
+		} else if (saved) {
+			found = data.value.find(lang => lang.id === saved);
+			currentLanguage.value = found?.id;
+		} else {
+			currentLanguage.value = data.value[0]?.id;
+		}
+
+		if (!query) localStorage.setItem("language_id", currentLanguage.value);
+
+		await lessonsStore.fetchLessons(query);
+	}
+};
+
+const fetcUserLanguages = async () => {
+	const user_id = route.query.user_id;
+
+	if (!user_id) return;
+
+	const { data, error } = await useAPI(`/user/${user_id}/languages`);
+
+	if (error.value) {
+		console.error("Error fetching user languages");
+	} else {
+		languages.value = data.value;
+
+		const lang_id_query = route.query.language_id;
+		const found = data.value.find(lang => lang.id === lang_id_query);
+		currentLanguage.value = found?.id;
 	}
 };
 
@@ -57,12 +89,31 @@ watch(currentLanguage, async (newLang, oldLang) => {
 	}
 
 	if (newLang !== oldLang) {
-		localStorage.setItem("language_id", newLang);
-		await lessonsStore.fetchLessons();
+		const user_id_query = route.query.user_id;
+		const lang_id_query = route.query.language_id;
+
+		if (!lang_id_query) {
+			localStorage.setItem("language_id", newLang);
+			lessonsStore.fetchLessons();
+		} else if (user_id_query) {
+			router.replace({ query: { user_id: user_id_query, language_id: newLang } });
+			lessonsStore.fetchUserLessons(user_id_query, newLang);
+		} else {
+			router.replace({ query: null });
+			localStorage.setItem("language_id", newLang);
+			lessonsStore.fetchLessons();
+		}
 	}
 });
 
-onMounted(fetchLanguages);
+onMounted(() => {
+	if (route.query.user_id) {
+		fetcUserLanguages();
+		lessonsStore.fetchUserLessons(route.query.user_id, route.query.language_id);
+	} else {
+		fetchLanguages();
+	}
+});
 </script>
 
 <style scoped>

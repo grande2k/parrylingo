@@ -1,5 +1,9 @@
 <template>
 	<section class="lessons">
+		<p v-if="route.query.user_id && lessonsStore.user" class="text-center mb-4">
+			Lessons by <strong>{{ lessonsStore.user.name }}</strong>
+		</p>
+
 		<language-picker />
 
 		<LoadingSpinner v-if="lessonsStore.loading" class="mx-auto mt-24" />

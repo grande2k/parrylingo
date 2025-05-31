@@ -14,8 +14,19 @@
 		</Teleport>
 
 		<div class="flex items-center justify-center gap-1 mb-4 sm:mb-6">
-			<p class="text-center underline underline-offset-4">{{ authorFullName }}</p>
-			<p class="text-center underline underline-offset-4">{{ singleLessonStore.lesson.language.name }}</p>
+			<nuxt-link
+				v-if="authorName"
+				:to="`/?user_id=${singleLessonStore.lesson.user.id}&language_id=${singleLessonStore.lesson.language.id}`"
+				class="text-center underline underline-offset-4"
+			>
+				{{ authorName }}
+			</nuxt-link>
+			<nuxt-link
+				:to="`/?language_id=${singleLessonStore.lesson.language.id}`"
+				class="text-center underline underline-offset-4"
+			>
+				{{ singleLessonStore.lesson.language.name }}
+			</nuxt-link>
 		</div>
 
 		<lessons-single-steps />
@@ -39,9 +50,9 @@
 const singleLessonStore = useSingleLessonStore();
 const showStart = ref(false);
 
-const authorFullName = computed(() => {
+const authorName = computed(() => {
 	if (!singleLessonStore.lesson || !singleLessonStore.lesson.user) return "";
-	return `${singleLessonStore.lesson.author.first_name} ${singleLessonStore.lesson.author.last_name} /`;
+	return `${singleLessonStore.lesson.user.name} /`;
 });
 
 const startLesson = () => {

@@ -44,9 +44,8 @@ const props = defineProps({
 });
 
 const lessonInfo = computed(() => {
-	if (props.lesson.author) {
-		const authorFullName = `${props.lesson.author?.first_name} ${props.lesson.author?.last_name}`;
-		return `${authorFullName} / ${props.lesson.language?.name}`;
+	if (props.lesson.user) {
+		return `${props.lesson.user.name} / ${props.lesson.language?.name}`;
 	} else {
 		return props.lesson.language?.name;
 	}
