@@ -15,12 +15,15 @@
 
 		<div class="flex items-center justify-center gap-1 mb-4 sm:mb-6">
 			<nuxt-link
-				v-if="authorName"
+				v-if="singleLessonStore.lesson.user"
 				:to="`/?user_id=${singleLessonStore.lesson.user.id}&language_id=${singleLessonStore.lesson.language.id}`"
 				class="text-center underline underline-offset-4"
 			>
-				{{ authorName }}
+				{{ singleLessonStore.lesson.user.name }}
 			</nuxt-link>
+
+			<p v-if="singleLessonStore.lesson.user">/</p>
+
 			<nuxt-link
 				:to="`/?language_id=${singleLessonStore.lesson.language.id}`"
 				class="text-center underline underline-offset-4"
@@ -49,11 +52,6 @@
 <script setup>
 const singleLessonStore = useSingleLessonStore();
 const showStart = ref(false);
-
-const authorName = computed(() => {
-	if (!singleLessonStore.lesson || !singleLessonStore.lesson.user) return "";
-	return `${singleLessonStore.lesson.user.name} /`;
-});
 
 const startLesson = () => {
 	showStart.value = false;
