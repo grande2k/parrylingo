@@ -14,21 +14,25 @@
 		</Teleport>
 
 		<div class="flex items-center justify-center gap-1 mb-4 sm:mb-6">
-			<nuxt-link
-				v-if="singleLessonStore.lesson.user"
-				:to="`/?user_id=${singleLessonStore.lesson.user.id}&language_id=${singleLessonStore.lesson.language.id}`"
-				class="text-center underline underline-offset-4"
-			>
-				{{ singleLessonStore.lesson.user.name }}
-			</nuxt-link>
-
-			<p v-if="singleLessonStore.lesson.user">/</p>
+			<button @click="goBack" class="rounded cursor-pointer pr-1">
+				<IconBack class="size-4" />
+			</button>
 
 			<nuxt-link
 				:to="`/?language_id=${singleLessonStore.lesson.language.id}`"
 				class="text-center underline underline-offset-4"
 			>
 				{{ singleLessonStore.lesson.language.name }}
+			</nuxt-link>
+
+			<p v-if="singleLessonStore.lesson.user">/</p>
+
+			<nuxt-link
+				v-if="singleLessonStore.lesson.user"
+				:to="`/?user_id=${singleLessonStore.lesson.user.id}&language_id=${singleLessonStore.lesson.language.id}`"
+				class="text-center underline underline-offset-4"
+			>
+				{{ singleLessonStore.lesson.user.name }}
 			</nuxt-link>
 		</div>
 
@@ -63,6 +67,10 @@ const isSoundDisabled = ref(false);
 const toggleSound = () => {
 	isSoundDisabled.value = !isSoundDisabled.value;
 	localStorage.setItem("lesson_sound_disabled", isSoundDisabled.value.toString());
+};
+
+const goBack = () => {
+	navigateTo("/");
 };
 
 onMounted(async () => {

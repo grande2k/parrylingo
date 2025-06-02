@@ -14,6 +14,9 @@
 		</Teleport>
 
 		<div class="flex items-center justify-center gap-1 mb-4 sm:mb-6">
+			<button @click="goBack" class="rounded cursor-pointer pr-1">
+				<IconBack class="size-4" />
+			</button>
 			<p class="text-center underline underline-offset-4">Random / {{ rouletteStore.language?.name }}</p>
 		</div>
 
@@ -48,6 +51,10 @@ const isSoundDisabled = ref(false);
 const toggleSound = () => {
 	isSoundDisabled.value = !isSoundDisabled.value;
 	localStorage.setItem("lesson_sound_disabled", isSoundDisabled.value.toString());
+};
+
+const goBack = () => {
+	navigateTo("/");
 };
 
 onMounted(async () => {
