@@ -10,7 +10,7 @@
 
 		<div
 			ref="draggable"
-			class="relative bg-secondary border-6 border-white rounded-full text-xl sm:text-2xl tracking-wide text-white text-center w-[280px] sm:w-[320px] py-4 px-2 font-bold mx-auto touch-none select-none"
+			class="relative bg-secondary border-6 border-white rounded-full text-xl sm:text-2xl tracking-wide text-white text-center py-4 pl-8 pr-20 font-bold mx-auto touch-none select-none"
 			:class="{ 'cursor-grab': !dragDisabled }"
 			:style="
 				dragging
