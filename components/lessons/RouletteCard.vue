@@ -31,8 +31,14 @@ const playing = ref(false);
 const videoSrc = "/images/roulette.mp4";
 const videoRef = ref(null);
 
+const audio = new Audio("/audio/roulette.mp3");
+audio.loop = true;
+
 const startRoulette = () => {
 	playing.value = true;
+
+	const isSoundDisabled = localStorage.getItem("lesson_sound_disabled") === "true";
+	if (!isSoundDisabled) audio.play();
 
 	nextTick(() => {
 		videoRef.value?.play().catch(() => {
@@ -42,6 +48,7 @@ const startRoulette = () => {
 };
 
 const onVideoEnd = () => {
+	audio.pause();
 	router.push(`/roulette?count=${props.count}`);
 };
 </script>

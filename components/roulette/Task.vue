@@ -78,6 +78,10 @@ const answerStatus = ref(null);
 const showResultModal = ref(false);
 const isAnswerProcessing = ref(false);
 
+const correctAudio = new Audio("/audio/answer_correct.mp3");
+const incorrectAudio = new Audio("/audio/answer_incorrect.mp3");
+const resultAudio = new Audio("/audio/result.mp3");
+
 const total = computed(() => rouletteStore.stepsStatus.length);
 
 const currentWord = computed(() => {
@@ -93,6 +97,15 @@ const selectAnswer = answer => {
 		const isCorrect = answer.title === currentWord.value.title;
 		answerStatus.value = isCorrect ? "correct" : "wrong";
 
+		const isSoundDisabled = localStorage.getItem("lesson_sound_disabled") === "true";
+
+		if (!isSoundDisabled) {
+			const audio = isCorrect ? correctAudio : incorrectAudio;
+			audio.pause();
+			audio.currentTime = 0;
+			audio.play();
+		}
+
 		setTimeout(() => {
 			rouletteStore.stepsStatus[rouletteStore.current_step - 1] = answerStatus.value;
 			selectedWordId.value = null;
@@ -101,6 +114,7 @@ const selectAnswer = answer => {
 			setTimeout(() => {
 				if (rouletteStore.current_step >= total.value) {
 					showResultModal.value = true;
+					if (!isSoundDisabled) resultAudio.play();
 				} else {
 					rouletteStore.current_step += 1;
 					rouletteStore.shuffle();
