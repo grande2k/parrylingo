@@ -40,12 +40,14 @@
 			@mousedown="startDrag"
 			@touchstart="startDrag"
 		>
-			{{ currentWord.title }}
+			{{ currentWord.titles[singleLessonStore.lesson.language.language_code] }}
 
 			<button
 				class="absolute right-0 top-0 size-15 sm:size-16 flex items-center justify-center border-4 border-white rounded-full text-white select-none"
 				:class="
-					isSoundDisabled ? 'bg-gray-400' : 'bg-secondary transition hover:bg-secondary/75 cursor-pointer'
+					isLessonSoundDisabled
+						? 'bg-gray-400'
+						: 'bg-secondary transition hover:bg-secondary/75 cursor-pointer'
 				"
 				@click="handlePlay"
 			>
@@ -70,12 +72,6 @@
 </template>
 
 <script setup>
-const emit = defineEmits(["play-muted"]);
-
-defineProps({
-	isSoundDisabled: Boolean,
-});
-
 const singleLessonStore = useSingleLessonStore();
 
 const selectedWordId = ref(null);
@@ -86,6 +82,8 @@ const isAnswerProcessing = ref(false);
 const correctAudio = new Audio("/audio/answer_correct.mp3");
 const incorrectAudio = new Audio("/audio/answer_incorrect.mp3");
 const resultAudio = new Audio("/audio/result.mp3");
+
+const isLessonSoundDisabled = ref(false);
 
 const currentWord = computed(() => {
 	if (singleLessonStore.current_step % 2) {
@@ -100,11 +98,13 @@ const selectAnswer = answer => {
 	isAnswerProcessing.value = true;
 	selectedWordId.value = answer.id;
 
+	const lang_code = singleLessonStore.lesson.language.language_code;
+
 	setTimeout(() => {
-		const isCorrect = answer.title === currentWord.value.title;
+		const isCorrect = answer.titles[lang_code] === currentWord.value.titles[lang_code];
 		answerStatus.value = isCorrect ? "correct" : "wrong";
 
-		const isSoundDisabled = localStorage.getItem("lesson_sound_disabled") === "true";
+		const isSoundDisabled = localStorage.getItem("interface_sound_disabled") === "true";
 
 		if (!isSoundDisabled) {
 			const audio = isCorrect ? correctAudio : incorrectAudio;
@@ -135,12 +135,7 @@ const selectAnswer = answer => {
 
 const handlePlay = () => {
 	const isSoundDisabled = localStorage.getItem("lesson_sound_disabled") === "true";
-
-	if (isSoundDisabled) {
-		emit("play-muted");
-	} else {
-		singleLessonStore.playAudio();
-	}
+	if (!isSoundDisabled) singleLessonStore.playAudio();
 };
 
 const draggable = ref(null);
@@ -223,4 +218,8 @@ const getBorderClass = wordId => {
 
 	return "btn-border-default";
 };
+
+onMounted(() => {
+	isLessonSoundDisabled.value = localStorage.getItem("lesson_sound_disabled") === "true";
+});
 </script>

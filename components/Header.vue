@@ -15,8 +15,21 @@
 				</li>
 			</ul>
 		</nav>
+
+		<button
+			class="settings-toggle-button absolute top-4 right-4 z-20 text-white bg-gray-600 flex items-center justify-center size-8 rounded-full cursor-pointer"
+			@click="showSettings = !showSettings"
+		>
+			<IconSettings class="size-4" />
+		</button>
+
+		<Settings v-if="showSettings" @close="showSettings = false" />
 	</header>
 </template>
+
+<script setup>
+const showSettings = ref(false);
+</script>
 
 <style scoped>
 @reference "@/assets/css/main.css";
