@@ -39,6 +39,8 @@
 </template>
 
 <script setup>
+const { t } = useI18n({ useScope: "global" });
+
 const props = defineProps({
 	lesson: { type: Object, required: true },
 });
@@ -76,19 +78,19 @@ const share = async () => {
 				});
 			} else {
 				unsecuredCopyToClipboard(url);
-				showToast("Link copied to clipboard", 2000, "success");
+				showToast(t("copy_success"), 2000, "success");
 			}
 		} else {
 			if (navigator.clipboard) {
 				await navigator.clipboard.writeText(url);
-				showToast("Link copied to clipboard", 2000, "success");
+				showToast(t("copy_success"), 2000, "success");
 			} else {
 				unsecuredCopyToClipboard(url);
-				showToast("Link copied to clipboard", 2000, "success");
+				showToast(t("copy_success"), 2000, "success");
 			}
 		}
 	} catch (err) {
-		showToast("Error, link was not copied!", 2000, "error");
+		showToast(t("copy_error"), 2000, "error");
 	}
 };
 </script>

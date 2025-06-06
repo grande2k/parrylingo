@@ -31,18 +31,28 @@
 			@mousedown="startDrag"
 			@touchstart="startDrag"
 		>
-			{{ currentWord.title }}
+			{{ currentWord.titles[rouletteStore.language.language_code] }}
 
 			<button
 				class="absolute right-0 top-0 size-15 sm:size-16 flex items-center justify-center border-4 border-white rounded-full text-white select-none"
 				:class="
-					isSoundDisabled ? 'bg-gray-400' : 'bg-secondary transition hover:bg-secondary/75 cursor-pointer'
+					isLessonSoundDisabled
+						? 'bg-gray-400'
+						: 'bg-secondary transition hover:bg-secondary/75 cursor-pointer'
 				"
 				@click="handlePlay"
 			>
 				<IconSound />
 			</button>
 		</div>
+
+		<button
+			class="absolute -right-5 sm:-right-7 -bottom-5 sm:-bottom-7 size-10 sm:size-14 flex items-center justify-center border-4 border-white rounded-full text-white text-lg sm:text-2xl select-none cursor-pointer"
+			:class="tooltipsDisabled ? 'bg-gray-400' : 'bg-secondary'"
+			@click="toggleTooltips"
+		>
+			?
+		</button>
 	</div>
 
 	<div class="grid grid-cols-2 gap-4 mt-10">
@@ -51,9 +61,16 @@
 			:key="word.id"
 			@click="selectAnswer(word)"
 			:disabled="isAnswerProcessing"
-			:class="['btn-answer', selectedWordId === word.id ? 'zoom' : '', getBorderClass(word.id)]"
+			:class="['btn-answer relative', selectedWordId === word.id ? 'zoom' : '', getBorderClass(word.id)]"
 		>
 			<img :src="getStaticUrl(word.image)" class="size-32 sm:size-42 object-contain select-none" alt="" />
+
+			<p
+				v-if="!tooltipsDisabled && getTitle(word.titles)"
+				class="absolute -bottom-6 sm:-bottom-7 left-1/2 -translate-x-1/2 bg-gray-400 border-4 border-white text-white sm:text-xl font-medium min-w-32 sm:min-w-36 py-1 sm:py-2 px-4 sm:px-4 rounded-full flex items-center justify-center"
+			>
+				{{ getTitle(word.titles) }}
+			</p>
 		</button>
 	</div>
 
@@ -67,10 +84,6 @@
 
 <script setup>
 const emit = defineEmits(["play-muted"]);
-
-defineProps({
-	isSoundDisabled: Boolean,
-});
 
 const rouletteStore = useRouletteStore();
 const selectedWordId = ref(null);
@@ -88,16 +101,38 @@ const currentWord = computed(() => {
 	return rouletteStore.words[(rouletteStore.current_step - 1) % rouletteStore.words.length];
 });
 
+const isLessonSoundDisabled = useState("lessonSoundDisabled");
+const tooltipsDisabled = ref(false);
+
+const i18n = useI18n();
+
+const toggleTooltips = () => {
+	tooltipsDisabled.value = !tooltipsDisabled.value;
+	localStorage.setItem("tooltips_disabled", tooltipsDisabled.value);
+};
+
+const getTitle = titles => {
+	const base = i18n.locale.value;
+	if (titles[base]) return titles[base];
+
+	const similar = Object.entries(titles).find(([key]) => key.startsWith(base + "_"));
+	if (similar) return similar[1];
+
+	return Object.values(titles)[0] || "";
+};
+
 const selectAnswer = answer => {
 	if (isAnswerProcessing.value) return;
 	isAnswerProcessing.value = true;
 	selectedWordId.value = answer.id;
 
+	const lang_code = rouletteStore.language.language_code;
+
 	setTimeout(() => {
-		const isCorrect = answer.title === currentWord.value.title;
+		const isCorrect = answer.titles[lang_code] === currentWord.value.titles[lang_code];
 		answerStatus.value = isCorrect ? "correct" : "wrong";
 
-		const isSoundDisabled = localStorage.getItem("lesson_sound_disabled") === "true";
+		const isSoundDisabled = localStorage.getItem("interface_sound_disabled") === "true";
 
 		if (!isSoundDisabled) {
 			const audio = isCorrect ? correctAudio : incorrectAudio;
@@ -128,12 +163,7 @@ const selectAnswer = answer => {
 
 const handlePlay = () => {
 	const isSoundDisabled = localStorage.getItem("lesson_sound_disabled") === "true";
-
-	if (isSoundDisabled) {
-		emit("play-muted");
-	} else {
-		rouletteStore.playAudio();
-	}
+	if (!isSoundDisabled) rouletteStore.playAudio();
 };
 
 const draggable = ref(null);
@@ -216,4 +246,8 @@ const getBorderClass = wordId => {
 
 	return "btn-border-default";
 };
+
+onMounted(() => {
+	tooltipsDisabled.value = localStorage.getItem("tooltips_disabled") === "true";
+});
 </script>

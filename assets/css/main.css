@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../../node_modules/flag-icons/css/flag-icons.min.css";
 
 @theme static {
 	--color-black: #000;
@@ -39,7 +40,7 @@
 
 @layer components {
 	.btn-answer {
-		@apply border-4 rounded-2xl flex items-center justify-center overflow-hidden aspect-square cursor-pointer transition-transform duration-200;
+		@apply border-4 rounded-2xl flex items-center justify-center aspect-square cursor-pointer transition-transform duration-200;
 	}
 
 	.btn-answer.zoom {

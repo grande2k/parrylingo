@@ -4,7 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
 	compatibilityDate: "2024-11-01",
 	devtools: { enabled: true },
-	modules: ["@pinia/nuxt"],
+	modules: ["@pinia/nuxt", "@nuxtjs/i18n"],
 	css: ["~/assets/css/main.css"],
 	colorMode: { preference: "light" },
 	runtimeConfig: {
@@ -12,5 +12,10 @@ export default defineNuxtConfig({
 	},
 	vite: {
 		plugins: [tailwindcss()],
+	},
+
+	i18n: {
+		defaultLocale: "en",
+		lazy: true,
 	},
 });

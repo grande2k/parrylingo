@@ -1,13 +1,13 @@
 <template>
 	<div v-if="showLanguages" class="flex justify-center items-center gap-4">
-		<p class="text-sm sm:text-base">Language to learn:</p>
+		<p class="text-sm sm:text-base">{{ $t("language_to_learn") }}:</p>
 
 		<div class="relative w-48">
 			<select
 				v-model="currentLanguage"
 				class="block w-full appearance-none rounded-md border border-gray-300 bg-white px-4 py-2 pr-10 text-sm shadow-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
 			>
-				<option v-if="!currentLanguage" disabled value="">Select language</option>
+				<option v-if="!currentLanguage" disabled value="">{{ $t("select_language") }}</option>
 				<option v-for="item in languages" :key="item.id" :value="item.id">
 					{{ item.name }}
 				</option>

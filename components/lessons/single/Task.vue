@@ -54,6 +54,14 @@
 				<IconSound />
 			</button>
 		</div>
+
+		<button
+			class="absolute -right-5 sm:-right-7 -bottom-5 sm:-bottom-7 size-10 sm:size-14 flex items-center justify-center border-4 border-white rounded-full text-white text-lg sm:text-2xl select-none cursor-pointer"
+			:class="tooltipsDisabled ? 'bg-gray-400' : 'bg-secondary'"
+			@click="toggleTooltips"
+		>
+			?
+		</button>
 	</div>
 
 	<div class="grid grid-cols-2 gap-4 mt-10">
@@ -62,9 +70,16 @@
 			:key="word.id"
 			@click="selectAnswer(word)"
 			:disabled="isAnswerProcessing"
-			:class="['btn-answer', selectedWordId === word.id ? 'zoom' : '', getBorderClass(word.id)]"
+			:class="['btn-answer relative', selectedWordId === word.id ? 'zoom' : '', getBorderClass(word.id)]"
 		>
 			<img :src="getStaticUrl(word.image)" class="size-32 sm:size-42 object-contain select-none" alt="" />
+
+			<p
+				v-if="!tooltipsDisabled && getTitle(word.titles)"
+				class="absolute -bottom-6 sm:-bottom-7 left-1/2 -translate-x-1/2 bg-gray-400 border-4 border-white text-white sm:text-xl font-medium min-w-32 sm:min-w-36 py-1 sm:py-2 px-4 sm:px-4 rounded-full flex items-center justify-center"
+			>
+				{{ getTitle(word.titles) }}
+			</p>
 		</button>
 	</div>
 
@@ -83,7 +98,15 @@ const correctAudio = new Audio("/audio/answer_correct.mp3");
 const incorrectAudio = new Audio("/audio/answer_incorrect.mp3");
 const resultAudio = new Audio("/audio/result.mp3");
 
-const isLessonSoundDisabled = ref(false);
+const isLessonSoundDisabled = useState("lessonSoundDisabled");
+const tooltipsDisabled = ref(false);
+
+const i18n = useI18n();
+
+const toggleTooltips = () => {
+	tooltipsDisabled.value = !tooltipsDisabled.value;
+	localStorage.setItem("tooltips_disabled", tooltipsDisabled.value);
+};
 
 const currentWord = computed(() => {
 	if (singleLessonStore.current_step % 2) {
@@ -136,6 +159,16 @@ const selectAnswer = answer => {
 const handlePlay = () => {
 	const isSoundDisabled = localStorage.getItem("lesson_sound_disabled") === "true";
 	if (!isSoundDisabled) singleLessonStore.playAudio();
+};
+
+const getTitle = titles => {
+	const base = i18n.locale.value;
+	if (titles[base]) return titles[base];
+
+	const similar = Object.entries(titles).find(([key]) => key.startsWith(base + "_"));
+	if (similar) return similar[1];
+
+	return Object.values(titles)[0] || "";
 };
 
 const draggable = ref(null);
@@ -220,6 +253,6 @@ const getBorderClass = wordId => {
 };
 
 onMounted(() => {
-	isLessonSoundDisabled.value = localStorage.getItem("lesson_sound_disabled") === "true";
+	tooltipsDisabled.value = localStorage.getItem("tooltips_disabled") === "true";
 });
 </script>

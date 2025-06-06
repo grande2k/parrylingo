@@ -19,11 +19,24 @@
 			/>
 		</div>
 
-		<p v-else-if="!lessonsStore.loading && !lessons?.length" class="mt-12 text-center">No lessons</p>
+		<p v-else-if="!lessonsStore.loading && !lessons?.length" class="mt-12 text-center">{{ $t("no_lessons") }}</p>
+
+		<p
+			v-if="$t('footer_text') && !lessonsStore.loading"
+			class="border-2 border-dark-gray/50 rounded-xl text-center p-2 mt-6"
+		>
+			{{ $t("footer_text") }}
+		</p>
+
+		<button v-if="isiOS() && !lessonsStore.loading" class="block mt-4 mx-auto cursor-pointer" @click="openAppStore">
+			<img src="/images/appstore-btn.svg" alt="appstore" />
+		</button>
 	</section>
 </template>
 
 <script setup>
+const { t } = useI18n({ useScope: "global" });
+
 const LessonsRouletteCard = resolveComponent("LessonsRouletteCard");
 const LessonsCard = resolveComponent("LessonsCard");
 
@@ -47,4 +60,14 @@ const lessons = computed(() => {
 
 	return output;
 });
+
+const formatAppStoreQuery = term => {
+	return encodeURIComponent(term.trim().replace(/\s+/g, "+"));
+};
+
+const openAppStore = () => {
+	const searchTerm = formatAppStoreQuery(t("appstore_search"));
+	const deepLink = `itms-apps://search.itunes.apple.com/WebObjects/MZSearch.woa/wa/search?media=software&term=${searchTerm}`;
+	window.location.href = deepLink;
+};
 </script>

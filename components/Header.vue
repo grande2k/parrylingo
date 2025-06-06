@@ -7,11 +7,11 @@
 		<nav>
 			<ul class="flex items-start justify-center gap-8">
 				<li class="header-link">
-					<nuxt-link to="/">Lessons</nuxt-link>
-					<a href="https://look-at-english.com/" class="header-sublink">Old Lessons</a>
+					<nuxt-link to="/">{{ $t("lessons") }}</nuxt-link>
+					<a href="https://look-at-english.com/" class="header-sublink">{{ $t("old_lessons") }}</a>
 				</li>
 				<li class="header-link">
-					<nuxt-link to="/favourites">Favourites</nuxt-link>
+					<nuxt-link to="/favourites">{{ $t("favourites") }}</nuxt-link>
 				</li>
 			</ul>
 		</nav>
@@ -23,7 +23,7 @@
 			<IconSettings class="size-4" />
 		</button>
 
-		<Settings v-if="showSettings" @close="showSettings = false" />
+		<Settings v-show="showSettings" @close="showSettings = false" />
 	</header>
 </template>
 

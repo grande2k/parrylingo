@@ -37,7 +37,7 @@ audio.loop = true;
 const startRoulette = () => {
 	playing.value = true;
 
-	const isSoundDisabled = localStorage.getItem("lesson_sound_disabled") === "true";
+	const isSoundDisabled = localStorage.getItem("interface_sound_disabled") === "true";
 	if (!isSoundDisabled) audio.play();
 
 	nextTick(() => {

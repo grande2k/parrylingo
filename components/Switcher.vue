@@ -19,19 +19,19 @@ const props = defineProps({
 
 const emit = defineEmits(["update"]);
 
+const state =
+	props.storageKey === "lesson_sound_disabled" ? useState("lessonSoundDisabled", () => props.defaultValue) : null;
+
 const enabled = ref(!props.defaultValue);
 
 onMounted(() => {
 	const saved = localStorage.getItem(props.storageKey);
-
-	if (saved !== null) {
-		enabled.value = saved === "false";
-	} else {
-		localStorage.setItem(props.storageKey, String(!props.defaultValue));
-	}
+	enabled.value = saved === null ? !props.defaultValue : saved === "false";
+	if (state) state.value = !enabled.value;
 });
 
 const onToggle = () => {
+	if (state) state.value = !enabled.value;
 	localStorage.setItem(props.storageKey, String(!enabled.value));
 	emit("update", enabled.value);
 };

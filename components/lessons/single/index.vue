@@ -36,7 +36,7 @@
 				class="bg-secondary rounded-full border-4 uppercase text-white text-3xl py-4 px-8 cursor-pointer leading-none font-bold tracking-wide"
 				@click="startLesson"
 			>
-				START
+				{{ $t("start") }}
 			</button>
 		</div>
 	</Teleport>
