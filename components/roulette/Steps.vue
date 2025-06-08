@@ -12,7 +12,7 @@
 				'bg-red-500': status === 'wrong',
 				'bg-gray-900': rouletteStore.current_step === index + 1,
 				'size-8 sm:size-10 text-sm': rouletteStore.stepsStatus.length === 18,
-				'size-10 sm:size-12 text-base': rouletteStore.stepsStatus.length === 4,
+				'size-8 sm:size-12 text-sm sm:text-base': rouletteStore.stepsStatus.length === 4,
 			}"
 		>
 			{{ index + 1 }}

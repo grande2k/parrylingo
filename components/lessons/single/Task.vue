@@ -1,5 +1,5 @@
 <template>
-	<div class="relative border-4 border-gray-400 rounded-2xl p-6 pb-8">
+	<div class="relative border-4 border-gray-400 rounded-2xl p-4 sm:p-6 pb-4 sm:pb-8">
 		<div class="flex items-center gap-4 mb-4">
 			<PuzzleMask
 				:imageUrl="getStaticUrl(currentWord.image)"
@@ -19,7 +19,7 @@
 
 		<div
 			ref="draggable"
-			class="relative bg-secondary border-6 border-white rounded-full text-xl sm:text-2xl tracking-wide text-white text-center py-4 pl-8 pr-20 font-bold mx-auto touch-none select-none"
+			class="relative bg-secondary border-6 border-white rounded-full text-xl sm:text-2xl tracking-wide text-white text-center py-3 px-8 font-bold mx-auto touch-none select-none"
 			:class="{ 'cursor-grab': !dragDisabled }"
 			:style="
 				dragging
@@ -33,7 +33,7 @@
 					: {
 							position: 'absolute',
 							left: '50%',
-							bottom: '-2.5rem',
+							bottom: '-2rem',
 							transform: 'translateX(-50%)',
 					  }
 			"
@@ -41,19 +41,15 @@
 			@touchstart="startDrag"
 		>
 			{{ currentWord.titles[singleLessonStore.lesson.language.language_code] }}
-
-			<button
-				class="absolute right-0 top-0 size-15 sm:size-16 flex items-center justify-center border-4 border-white rounded-full text-white select-none"
-				:class="
-					isLessonSoundDisabled
-						? 'bg-gray-400'
-						: 'bg-secondary transition hover:bg-secondary/75 cursor-pointer'
-				"
-				@click="handlePlay"
-			>
-				<IconSound />
-			</button>
 		</div>
+
+		<button
+			class="absolute right-5 sm:right-8 -bottom-5 sm:-bottom-7 size-10 sm:size-14 flex items-center justify-center border-4 border-white rounded-full text-white select-none"
+			:class="isLessonSoundDisabled ? 'bg-gray-400' : 'bg-secondary cursor-pointer'"
+			@click="handlePlay"
+		>
+			<IconSound class="size-4 sm:size-6" />
+		</button>
 
 		<button
 			class="absolute -right-5 sm:-right-7 -bottom-5 sm:-bottom-7 size-10 sm:size-14 flex items-center justify-center border-4 border-white rounded-full text-white text-lg sm:text-2xl select-none cursor-pointer"
@@ -64,7 +60,7 @@
 		</button>
 	</div>
 
-	<div class="grid grid-cols-2 gap-4 mt-10">
+	<div class="grid grid-cols-2 gap-4 mt-8 sm:mt-10">
 		<button
 			v-for="word in singleLessonStore.shuffledWords"
 			:key="word.id"
