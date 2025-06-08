@@ -23,7 +23,7 @@
 
 		<p
 			v-if="$t('footer_text') && !lessonsStore.loading"
-			class="border-2 border-dark-gray/50 rounded-xl text-center p-2 mt-6"
+			class="border-2 border-dark-gray/50 rounded-xl whitespace-pre-line text-center p-2 mt-6"
 		>
 			{{ $t("footer_text") }}
 		</p>

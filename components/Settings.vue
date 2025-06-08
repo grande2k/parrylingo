@@ -1,8 +1,5 @@
 <template>
-	<div
-		class="absolute top-3 right-3 z-10 bg-gray-300 drop-shadow-lg rounded-xl p-4 pt-12 space-y-3"
-		ref="settingsRef"
-	>
+	<div class="absolute top-3 right-3 z-10 bg-gray-300 rounded-xl p-4 pt-12 space-y-3" ref="settingsRef">
 		<div class="flex items-center justify-between gap-4">
 			<span class="text-sm text-black font-semibold">{{ $t("interface_sounds") }}: </span>
 			<Switcher storageKey="interface_sound_disabled" :defaultValue="false" />
