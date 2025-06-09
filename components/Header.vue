@@ -8,7 +8,9 @@
 			<ul class="flex items-start justify-center gap-8">
 				<li class="header-link">
 					<nuxt-link to="/">{{ $t("lessons") }}</nuxt-link>
-					<a href="https://look-at-english.com/" class="header-sublink">{{ $t("old_lessons") }}</a>
+					<a href="https://look-at-english.com/index_en.html" class="header-sublink">
+						{{ $t("old_lessons") }}
+					</a>
 				</li>
 				<li class="header-link">
 					<nuxt-link to="/favourites">{{ $t("favourites") }}</nuxt-link>

@@ -18,4 +18,20 @@ export default defineNuxtConfig({
 		defaultLocale: "en",
 		lazy: true,
 	},
+
+	app: {
+		head: {
+			title: "Loot-At-English - English for children beginners",
+			meta: [
+				{
+					name: "description",
+					content: "English for children beginners",
+				},
+				{
+					name: "keywords",
+					content: "English for children, English for kids, Learn english",
+				},
+			],
+		},
+	},
 });
