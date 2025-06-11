@@ -6,7 +6,13 @@
 			<button @click="goBack" class="rounded cursor-pointer pr-1">
 				<IconBack class="size-4" />
 			</button>
-			<p class="text-center underline underline-offset-4">{{ rouletteStore.language?.name }}</p>
+
+			<nuxt-link
+				:to="`/?language_id=${rouletteStore.language.id}`"
+				class="text-center underline underline-offset-4"
+			>
+				{{ rouletteStore.language.name }}
+			</nuxt-link>
 		</div>
 
 		<RouletteSteps />

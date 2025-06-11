@@ -1,14 +1,14 @@
 <template>
 	<div
-		class="lesson-card flex items-center justify-center rounded-xl cursor-pointer"
+		class="lesson-card aspect-square flex items-center justify-center rounded-xl cursor-pointer"
 		:class="playing ? 'bg-[#9db77b]' : 'bg-[#91b377]'"
 		@click="startRoulette"
 	>
-		<div v-if="playing" class="rounded-xl w-36 h-auto overflow-hidden">
+		<div v-if="playing" class="rounded-xl size-48 overflow-hidden">
 			<video
 				ref="videoRef"
 				:src="videoSrc"
-				class="video"
+				class="scale-105"
 				playsinline
 				muted
 				autoplay
@@ -19,7 +19,7 @@
 			></video>
 		</div>
 
-		<img v-else src="/images/roulette.png" class="rounded-xl w-36 h-auto object-contain" />
+		<img v-else src="/images/roulette.png" class="rounded-xl size-48 object-contain" />
 	</div>
 </template>
 
@@ -52,10 +52,3 @@ const onVideoEnd = () => {
 	router.push(`/roulette?count=${props.count}`);
 };
 </script>
-
-<style scoped>
-.video {
-	transform: scale(1.025);
-	object-fit: cover;
-}
-</style>
