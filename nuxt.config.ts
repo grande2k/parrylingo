@@ -21,15 +21,17 @@ export default defineNuxtConfig({
 
 	app: {
 		head: {
-			title: "Loot-At-English - English for children beginners",
+			title: "ParryLingo",
 			meta: [
 				{
 					name: "description",
-					content: "English for children beginners",
+					content:
+						"ParryLingo offers the world's most AI-powered lessons to learn languages. It's really visual, fun and science-based. Practice online or on the app!",
 				},
 				{
 					name: "keywords",
-					content: "English for children, English for kids, Learn english",
+					content:
+						"language,learning,английский,язык,learn,English,Spanish,French,Italien,German,Turk,apprendre, l’anglais,français,",
 				},
 			],
 		},
