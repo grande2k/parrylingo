@@ -10,7 +10,7 @@
 		</div>
 
 		<RouletteSteps />
-		<RouletteTask :isSoundDisabled="isSoundDisabled" @play-muted="startShaking" />
+		<RouletteTask />
 	</div>
 
 	<Teleport to="body">
@@ -35,19 +35,11 @@ const startRoulette = () => {
 	rouletteStore.playAudio();
 };
 
-const isSoundDisabled = ref(false);
-
-const toggleSound = () => {
-	isSoundDisabled.value = !isSoundDisabled.value;
-	localStorage.setItem("lesson_sound_disabled", isSoundDisabled.value.toString());
-};
-
 const goBack = () => {
 	navigateTo("/");
 };
 
 onMounted(async () => {
-	isSoundDisabled.value = localStorage.getItem("lesson_sound_disabled") === "true";
 	const langId = localStorage.getItem("language_id");
 	const count = Number(route.query.count) || 4;
 
@@ -55,30 +47,4 @@ onMounted(async () => {
 	await rouletteStore.loadRoulette(langId, count);
 	showStart.value = true;
 });
-
-const isShaking = ref(false);
-let animationInterval;
-
-const startShaking = () => {
-	isShaking.value = false;
-
-	requestAnimationFrame(() => {
-		isShaking.value = true;
-
-		setTimeout(() => {
-			isShaking.value = false;
-		}, 500);
-	});
-};
-
-watch(isSoundDisabled, value => {
-	if (value) {
-		startShaking();
-		animationInterval = setInterval(startShaking, 5000);
-	} else {
-		if (animationInterval) clearInterval(animationInterval);
-	}
-});
-
-onUnmounted(() => clearInterval(animationInterval));
 </script>

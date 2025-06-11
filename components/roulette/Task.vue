@@ -31,7 +31,7 @@
 			@mousedown="startDrag"
 			@touchstart="startDrag"
 		>
-			{{ currentWord.titles[rouletteStore.language.language_code] }}
+			{{ getTitleForLang(currentWord.titles, rouletteStore.language.language_code, true) }}
 		</div>
 
 		<button
@@ -62,10 +62,10 @@
 			<img :src="getStaticUrl(word.image)" class="size-32 sm:size-42 object-contain select-none" alt="" />
 
 			<p
-				v-if="!tooltipsDisabled && getTitle(word.titles)"
+				v-if="!tooltipsDisabled && getTitleForLang(word.titles, i18n.locale.value)"
 				class="absolute -bottom-6 sm:-bottom-7 left-1/2 -translate-x-1/2 bg-gray-400 border-4 border-white text-white sm:text-xl font-medium min-w-32 sm:min-w-36 py-1 sm:py-2 px-4 sm:px-4 rounded-full flex items-center justify-center"
 			>
-				{{ getTitle(word.titles) }}
+				{{ getTitleForLang(word.titles, i18n.locale.value) }}
 			</p>
 		</button>
 	</div>
@@ -79,8 +79,6 @@
 </template>
 
 <script setup>
-const emit = defineEmits(["play-muted"]);
-
 const rouletteStore = useRouletteStore();
 const selectedWordId = ref(null);
 const answerStatus = ref(null);
@@ -107,16 +105,6 @@ const toggleTooltips = () => {
 	localStorage.setItem("tooltips_disabled", tooltipsDisabled.value);
 };
 
-const getTitle = titles => {
-	const base = i18n.locale.value;
-	if (titles[base]) return titles[base];
-
-	const similar = Object.entries(titles).find(([key]) => key.startsWith(base + "_"));
-	if (similar) return similar[1];
-
-	return Object.values(titles)[0] || "";
-};
-
 const selectAnswer = answer => {
 	if (isAnswerProcessing.value) return;
 	isAnswerProcessing.value = true;
@@ -125,7 +113,8 @@ const selectAnswer = answer => {
 	const lang_code = rouletteStore.language.language_code;
 
 	setTimeout(() => {
-		const isCorrect = answer.titles[lang_code] === currentWord.value.titles[lang_code];
+		const isCorrect =
+			getTitleForLang(answer.titles, lang_code) === getTitleForLang(currentWord.value.titles, lang_code);
 		answerStatus.value = isCorrect ? "correct" : "wrong";
 
 		const isSoundDisabled = localStorage.getItem("interface_sound_disabled") === "true";

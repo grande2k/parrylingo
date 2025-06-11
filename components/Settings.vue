@@ -52,11 +52,9 @@ const selectedInterface = computed(() => {
 });
 
 const sortedInterfaces = computed(() => {
-	if (!interfaces.value || !selectedLang.value) return interfaces.value ?? [];
-	return [
-		...interfaces.value.filter(i => i.language_code === selectedLang.value),
-		...interfaces.value.filter(i => i.language_code !== selectedLang.value),
-	];
+	if (!interfaces.value) return [];
+
+	return [...interfaces.value].sort((a, b) => a.language_code.localeCompare(b.language_code));
 });
 
 const setInterfaceLanguage = newLang => {
