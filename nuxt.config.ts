@@ -21,17 +21,16 @@ export default defineNuxtConfig({
 
 	app: {
 		head: {
-			title: "ParryLingo",
+			title: "ParryLingo. Разговорный Английский язык для начинающих с нуля самостоятельно: за 100 уроков по 5 минут — до уровня B2",
 			meta: [
 				{
 					name: "description",
-					content:
-						"ParryLingo offers the world's most AI-powered lessons to learn languages. It's really visual, fun and science-based. Practice online or on the app!",
+					content: "Cоздавайте на каждый день комплект новых фразовых уроков с изображениями на основе LLM  ",
 				},
 				{
 					name: "keywords",
 					content:
-						"language,learning,английский,язык,learn,English,Spanish,French,Italien,German,Turk,apprendre, l’anglais,français,",
+						"английский язык, English, школа английского языка, английский онлайн, изучение английского, занятия английским, английский с преподавателем, французский, испанский, итальянский, немецкий, турецкий",
 				},
 			],
 		},
