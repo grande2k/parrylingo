@@ -38,6 +38,9 @@ importers:
       vue-router:
         specifier: ^4.5.1
         version: 4.5.1(vue@3.5.13(typescript@5.8.3))
+      yandex-metrika-module-nuxt3:
+        specifier: ^1.5.3
+        version: 1.5.3(magicast@0.3.5)
 
 packages:
 
@@ -4277,6 +4280,9 @@ packages:
     resolution: {integrity: sha512-10ULxpnOCQXxJvBgxsn9ptjq6uviG/htZKk9veJGhlqn3w/DxQ631zFF+nlQXLwmImeS5amR2dl2U8sg6U9jsQ==}
     engines: {node: '>= 14'}
     hasBin: true
+
+  yandex-metrika-module-nuxt3@1.5.3:
+    resolution: {integrity: sha512-1JIQb5CF1dh/ZGce5wt5Q2jNCqJLxKWisWo0h8Ee2UzndJIiRAdrADliIDXMD6u2JyJvGPyu3qozkTxPFOzxcw==}
 
   yargs-parser@21.1.1:
     resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
@@ -8955,6 +8961,14 @@ snapshots:
       yaml: 2.7.1
 
   yaml@2.7.1: {}
+
+  yandex-metrika-module-nuxt3@1.5.3(magicast@0.3.5):
+    dependencies:
+      '@nuxt/kit': 3.17.3(magicast@0.3.5)
+      defu: 6.1.4
+      pathe: 1.1.2
+    transitivePeerDependencies:
+      - magicast
 
   yargs-parser@21.1.1: {}
 

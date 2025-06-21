@@ -28,7 +28,7 @@
 			{{ $t("footer_text") }}
 		</p>
 
-		<button v-if="isiOS() && !lessonsStore.loading" class="block mt-4 mx-auto cursor-pointer" @click="openAppStore">
+		<button v-if="!lessonsStore.loading" class="block mt-4 mx-auto cursor-pointer" @click="handleLinkClick">
 			<img src="/images/appstore-btn.svg" alt="appstore" />
 		</button>
 	</section>
@@ -42,7 +42,7 @@ const LessonsCard = resolveComponent("LessonsCard");
 
 const lessonsStore = useLessonsStore();
 const route = useRoute();
-
+const { showToast } = useToast();
 const { favourites } = useFavourites();
 
 const isFavourites = computed(() => route.name === "favourites");
@@ -51,8 +51,8 @@ const lessons = computed(() => {
 	const list = lessonsStore.lessons ?? [];
 	const result = isFavourites.value ? list.filter(l => favourites.value.includes(l.id)) : list;
 
-	const showShortRoulette = result.length >= 2;
-	const showLongRoulette = result.length > 9;
+	const showShortRoulette = result.length >= 2 && !isFavourites.value;
+	const showLongRoulette = result.length > 9 && !isFavourites.value;
 
 	const output = [...result];
 	if (showShortRoulette) output.unshift({ type: "roulette", count: 4 });
@@ -65,9 +65,21 @@ const formatAppStoreQuery = term => {
 	return encodeURIComponent(term.trim().replace(/\s+/g, "+"));
 };
 
-const openAppStore = () => {
-	const searchTerm = formatAppStoreQuery(t("appstore_search"));
-	const deepLink = `itms-apps://search.itunes.apple.com/WebObjects/MZSearch.woa/wa/search?media=software&term=${searchTerm}`;
-	window.location.href = deepLink;
+const handleLinkClick = async () => {
+	if (isiOS()) {
+		const searchTerm = formatAppStoreQuery(t("appstore_search"));
+		const deepLink = `itms-apps://search.itunes.apple.com/WebObjects/MZSearch.woa/wa/search?media=software&term=${searchTerm}`;
+		window.location.href = deepLink;
+	} else {
+		const url = "https://apps.apple.com/app/parrylingo-language-learning/id1439733300";
+
+		if (navigator.clipboard) {
+			await navigator.clipboard.writeText(url);
+			showToast(t("copy_success"), 2000, "success");
+		} else {
+			unsecuredCopyToClipboard(url);
+			showToast(t("copy_success"), 2000, "success");
+		}
+	}
 };
 </script>

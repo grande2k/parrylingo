@@ -4,7 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
 	compatibilityDate: "2024-11-01",
 	devtools: { enabled: true },
-	modules: ["@pinia/nuxt", "@nuxtjs/i18n"],
+	modules: ["@pinia/nuxt", "@nuxtjs/i18n", "yandex-metrika-module-nuxt3"],
 	css: ["~/assets/css/main.css"],
 	colorMode: { preference: "light" },
 	runtimeConfig: {
@@ -34,5 +34,13 @@ export default defineNuxtConfig({
 				},
 			],
 		},
+	},
+
+	yandexMetrika: {
+		id: process.env.YANDEX_METRIKA_ID,
+		clickmap: true,
+		trackLinks: true,
+		accurateTrackBounce: true,
+		webvisor: true,
 	},
 });
