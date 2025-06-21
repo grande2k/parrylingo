@@ -5,9 +5,20 @@
 			<Switcher storageKey="interface_sound_disabled" :defaultValue="false" />
 		</div>
 
-		<div class="flex items-center justify-between gap-4">
+		<div
+			class="flex items-center justify-between gap-4"
+			:class="{ 'opacity-45 pointer-events-none': isWordVisibilityDisabled }"
+		>
 			<span class="text-sm text-black font-semibold">{{ $t("word_sounds") }}: </span>
 			<Switcher storageKey="lesson_sound_disabled" :defaultValue="false" />
+		</div>
+
+		<div
+			class="flex items-center justify-between gap-4"
+			:class="{ 'opacity-45 pointer-events-none': isLessonSoundDisabled }"
+		>
+			<span class="text-sm text-black font-semibold">{{ $t("word_visibility") }}: </span>
+			<Switcher storageKey="word_visibility_disabled" :defaultValue="false" />
 		</div>
 
 		<div v-if="interfaces && interfaces.length">
@@ -37,6 +48,9 @@ const interfaces = useState("interfaces", () => null);
 
 const i18n = useI18n();
 const selectedLang = ref(null);
+
+const isLessonSoundDisabled = useState("lessonSoundDisabled");
+const isWordVisibilityDisabled = useState("wordVisibilityDisabled");
 
 const handleClickOutside = event => {
 	if (!settingsRef.value) return;

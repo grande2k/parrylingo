@@ -20,7 +20,11 @@ const props = defineProps({
 const emit = defineEmits(["update"]);
 
 const state =
-	props.storageKey === "lesson_sound_disabled" ? useState("lessonSoundDisabled", () => props.defaultValue) : null;
+	props.storageKey === "lesson_sound_disabled"
+		? useState("lessonSoundDisabled", () => props.defaultValue)
+		: props.storageKey === "word_visibility_disabled"
+		? useState("wordVisibilityDisabled", () => props.defaultValue)
+		: null;
 
 const enabled = ref(!props.defaultValue);
 
@@ -35,6 +39,8 @@ const onToggle = () => {
 	localStorage.setItem(props.storageKey, String(!enabled.value));
 	emit("update", enabled.value);
 };
+
+watch(state, newValue => (enabled.value = !newValue));
 </script>
 
 <style scoped>

@@ -14,6 +14,7 @@
 			:class="[
 				wordLengthClass(getTitleForLang(currentWord.titles, rouletteStore.language.language_code, true)),
 				{ 'cursor-grab': !dragDisabled },
+				{ 'text-[0px] size-16 !py-2 !px-2': isWordVisibilityDisabled },
 			]"
 			:style="
 				dragging
@@ -36,6 +37,14 @@
 		>
 			{{ getTitleForLang(currentWord.titles, rouletteStore.language.language_code, true) }}
 		</div>
+
+		<button
+			class="absolute -right-5 sm:-right-7 bottom-5 sm:bottom-8 size-10 sm:size-14 flex items-center justify-center border-4 border-white rounded-full text-white select-none cursor-pointer"
+			:class="isWordVisibilityDisabled ? 'bg-gray-400' : 'bg-secondary'"
+			@click="toggleWordVisibility"
+		>
+			<IconPencil class="size-4 sm:size-6" />
+		</button>
 
 		<button
 			class="absolute right-5 sm:right-8 -bottom-5 sm:-bottom-7 size-10 sm:size-14 flex items-center justify-center border-4 border-white rounded-full text-white select-none"
@@ -100,6 +109,7 @@ const currentWord = computed(() => {
 });
 
 const isLessonSoundDisabled = useState("lessonSoundDisabled");
+const isWordVisibilityDisabled = useState("wordVisibilityDisabled");
 const tooltipsDisabled = ref(false);
 
 const i18n = useI18n();
@@ -107,6 +117,11 @@ const i18n = useI18n();
 const toggleTooltips = () => {
 	tooltipsDisabled.value = !tooltipsDisabled.value;
 	localStorage.setItem("tooltips_disabled", tooltipsDisabled.value);
+};
+
+const toggleWordVisibility = () => {
+	isWordVisibilityDisabled.value = !isWordVisibilityDisabled.value;
+	localStorage.setItem("word_visibility_disabled", isWordVisibilityDisabled.value);
 };
 
 const selectAnswer = answer => {
