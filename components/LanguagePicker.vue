@@ -106,6 +106,12 @@ watch(currentLanguage, async (newLang, oldLang) => {
 	}
 });
 
+watch(
+	() => route.query,
+	() => lessonsStore.fetchLessons(),
+	{ deep: true }
+);
+
 onMounted(() => {
 	if (route.query.user_id) {
 		fetcUserLanguages();
