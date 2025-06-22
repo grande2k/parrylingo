@@ -1,12 +1,12 @@
 <template>
 	<header class="pb-4 sm:pb-6 mb-4 sm:mb-6 border-b-[3px] border-gray-200">
-		<div class="mb-4 sm:mb-6">
+		<nuxt-link to="/" class="block mb-4 sm:mb-6">
 			<img src="/images/logo.jpg" alt="" class="w-60 h-12 sm:w-72 sm:h-16 object-cover mx-auto" />
-		</div>
+		</nuxt-link>
 
 		<nav>
 			<ul class="flex items-start justify-center gap-8">
-				<li class="header-link">
+				<li class="header-link" :class="{ ignore: route.query.user_id }">
 					<nuxt-link to="/">{{ $t("lessons") }}</nuxt-link>
 					<a href="https://look-at-english.com/index_en.html" class="header-sublink">
 						{{ $t("old_lessons") }}
@@ -31,6 +31,7 @@
 
 <script setup>
 const showSettings = ref(false);
+const route = useRoute();
 </script>
 
 <style scoped>
@@ -48,7 +49,7 @@ const showSettings = ref(false);
 	@apply text-xs sm:text-sm block mt-1 font-semibold;
 }
 
-.header-link a.router-link-exact-active {
+.header-link:not(.ignore) a.router-link-exact-active {
 	@apply text-primary no-underline text-3xl leading-none;
 }
 </style>
