@@ -7,3 +7,17 @@
 		</main>
 	</div>
 </template>
+
+<script setup>
+const { t, locale } = useI18n();
+
+watchEffect(() => {
+	useHead({
+		title: t("meta_title"),
+		meta: [
+			{ name: "description", content: t("meta_description") },
+			{ name: "keywords", content: t("meta_keywords") },
+		],
+	});
+});
+</script>

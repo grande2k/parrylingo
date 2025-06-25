@@ -1,4 +1,7 @@
 {
+	"meta_title": "English, Spanish and French for beginners from scratch on their own: in 100 lessons of 5 minutes each, up to the B2 level.",
+	"meta_description": "Create a set of new phrase lessons with images based on LLM for every day",
+	"meta_keywords": "language learning, games, Duolingo language lessons, learn English, learn Spanish, Quizlet, Babbel, hellotalk, Lingokids, Rosetta Stone, Memrise, pimsleur, Busuu, Elsa speak",
 	"lessons": "Lessons",
 	"old_lessons": "Old lessons",
 	"no_lessons": "No lessons",
@@ -13,5 +16,18 @@
 	"footer_text": "Bottom text",
 	"appstore_search": "Search Appstore",
 	"copy_error": "Link not copied",
-	"copy_success": "Link copied"
+	"error": "Error",
+	"copy_success": "Link copied",
+	"auth_text": "Login or signup to see your points",
+	"sign_in": "Sign in",
+	"sign_up": "Sign up",
+	"cancel": "Cancel",
+	"email": "Email",
+	"name": "Name",
+	"password": "Password",
+	"repeat_password": "Repeat password",
+	"passwords_dont_match": "Passwords don't match",
+	"fill_all_fields": "Fill all fields",
+	"user_not_found": "User not found",
+	"signup_success": "Successfully signed up"
 }
