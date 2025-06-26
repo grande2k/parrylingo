@@ -22,8 +22,11 @@
 			<PuzzleMask direction="right" :imageUrl="lesson.words[0].image" class="size-12 sm:size-14 mx-auto" />
 		</div>
 
-		<p class="bg-secondary py-1 px-2 text-sm sm:text-base text-center text-white">
-			{{ lessonInfo }}
+		<p
+			class="bg-secondary py-1 px-2 text-sm sm:text-base text-center leading-none text-white min-h-8 flex flex-col justify-center"
+		>
+			<span v-if="lesson.user" class="leading-tight block">{{ lesson.user.name }}</span>
+			<span class="overflow-hidden whitespace-nowrap overflow-ellipsis">{{ lessonWords }}</span>
 		</p>
 
 		<div class="grid grid-cols-2 flex-auto">
@@ -39,18 +42,14 @@
 </template>
 
 <script setup>
-const { t } = useI18n({ useScope: "global" });
+const { t, locale } = useI18n({ useScope: "global" });
 
 const props = defineProps({
 	lesson: { type: Object, required: true },
 });
 
-const lessonInfo = computed(() => {
-	if (props.lesson.user) {
-		return `${props.lesson.user.name} / ${props.lesson.language?.name}`;
-	} else {
-		return props.lesson.language?.name;
-	}
+const lessonWords = computed(() => {
+	return `${props.lesson.words[0].titles[locale.value]} / ${props.lesson.words[1].titles[locale.value]}`;
 });
 
 const { isFavourite, toggleFavourite } = useFavourites();

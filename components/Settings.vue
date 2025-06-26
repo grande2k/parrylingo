@@ -1,5 +1,5 @@
 <template>
-	<div class="absolute top-3 right-3 z-10 bg-gray-300 rounded-xl p-4 pt-12 space-y-3" ref="settingsRef">
+	<div class="absolute top-3 right-3 z-30 bg-gray-300 rounded-xl p-4 pt-12 space-y-3" ref="settingsRef">
 		<div class="flex items-center justify-between gap-4">
 			<span class="text-sm text-black font-semibold">{{ $t("interface_sounds") }}: </span>
 			<Switcher storageKey="interface_sound_disabled" :defaultValue="false" />
@@ -22,20 +22,46 @@
 		</div>
 
 		<div v-if="interfaces && interfaces.length">
-			<span class="text-sm text-black font-semibold">{{ $t("interface_languages") }}: </span>
+			<span class="text-sm text-black font-semibold"
+				>{{ $t("interface_languages") }}: {{ selectedInterface.name }}
+			</span>
 
 			<div class="grid grid-cols-6 gap-2">
 				<div
 					v-for="item in sortedInterfaces"
 					:key="item.language_code"
+					:title="item.name"
 					class="px-1.5 cursor-pointer"
-					:class="{ 'bg-gray-25/50 rounded': item.language_code === selectedInterface.language_code }"
+					:class="{
+						'bg-gray-25/50 rounded scale-120': item.language_code === selectedInterface.language_code,
+					}"
 					@click="setInterfaceLanguage(item.language_code)"
 				>
-					<span :class="`block fi fi-${item.flag_code}`"></span>
+					<span
+						:class="[
+							`block fi fi-${item.flag_code}`,
+							{ 'scale-110': item.language_code === selectedInterface.language_code },
+						]"
+					></span>
 				</div>
 			</div>
 		</div>
+
+		<button
+			class="block w-full bg-secondary py-2 px-6 text-white rounded-full font-semibold cursor-pointer"
+			@click="openSignInModal"
+		>
+			{{ $t("sign_in") }}
+		</button>
+
+		<button
+			class="block w-full bg-secondary py-2 px-6 text-white rounded-full font-semibold cursor-pointer mt-1"
+			@click="openSignUpModal"
+		>
+			{{ $t("sign_up") }}
+		</button>
+
+		<AuthModal :open="authModal" :screen="authScreen" @close="closeAuthModal" />
 	</div>
 </template>
 
@@ -48,6 +74,9 @@ const interfaces = useState("interfaces", () => null);
 
 const i18n = useI18n();
 const selectedLang = ref(null);
+
+const authModal = ref(false);
+const authScreen = ref(null);
 
 const isLessonSoundDisabled = useState("lessonSoundDisabled");
 const isWordVisibilityDisabled = useState("wordVisibilityDisabled");
@@ -75,6 +104,22 @@ const setInterfaceLanguage = newLang => {
 	localStorage.setItem("interface_language", newLang);
 	selectedLang.value = newLang;
 	i18n.locale.value = newLang;
+};
+
+const openSignInModal = () => {
+	authModal.value = true;
+	authScreen.value = "login";
+};
+
+const openSignUpModal = () => {
+	authModal.value = true;
+	authScreen.value = "signup";
+};
+
+const closeAuthModal = () => {
+	authModal.value = false;
+	authScreen.value = null;
+	emit("close");
 };
 
 onMounted(async () => {
