@@ -8,9 +8,6 @@
 			<ul class="flex items-start justify-center gap-8">
 				<li class="header-link" :class="{ ignore: route.query.user_id }">
 					<nuxt-link to="/">{{ $t("lessons") }}</nuxt-link>
-					<a href="https://look-at-english.com/index_en.html" class="header-sublink">
-						{{ $t("old_lessons") }}
-					</a>
 				</li>
 				<li class="header-link">
 					<nuxt-link to="/favourites">{{ $t("favourites") }}</nuxt-link>
@@ -43,10 +40,6 @@ const route = useRoute();
 
 .header-link a:not(.header-sublink) {
 	@apply text-xl sm:text-2xl text-black font-semibold;
-}
-
-.header-sublink {
-	@apply text-xs sm:text-sm block mt-1 font-semibold;
 }
 
 .header-link:not(.ignore) a.router-link-exact-active {

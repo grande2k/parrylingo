@@ -20,29 +20,16 @@
 		</div>
 
 		<p v-else-if="!lessonsStore.loading && !lessons?.length" class="mt-12 text-center">{{ $t("no_lessons") }}</p>
-
-		<p
-			v-if="$t('footer_text') && !lessonsStore.loading"
-			class="border-2 border-dark-gray/50 rounded-xl whitespace-pre-line text-center p-2 mt-6"
-		>
-			{{ $t("footer_text") }}
-		</p>
-
-		<button v-if="!lessonsStore.loading" class="block mt-4 mx-auto cursor-pointer" @click="handleLinkClick">
-			<img src="/images/appstore-btn.svg" alt="appstore" />
-		</button>
 	</section>
 </template>
 
 <script setup>
-const { t } = useI18n({ useScope: "global" });
-
 const LessonsRouletteCard = resolveComponent("LessonsRouletteCard");
 const LessonsCard = resolveComponent("LessonsCard");
 
 const lessonsStore = useLessonsStore();
 const route = useRoute();
-const { showToast } = useToast();
+
 const { favourites } = useFavourites();
 
 const isFavourites = computed(() => route.name === "favourites");
@@ -60,26 +47,4 @@ const lessons = computed(() => {
 
 	return output;
 });
-
-const formatAppStoreQuery = term => {
-	return encodeURIComponent(term.trim().replace(/\s+/g, "+"));
-};
-
-const handleLinkClick = async () => {
-	if (isiOS()) {
-		const searchTerm = formatAppStoreQuery(t("appstore_search"));
-		const deepLink = `itms-apps://search.itunes.apple.com/WebObjects/MZSearch.woa/wa/search?media=software&term=${searchTerm}`;
-		window.location.href = deepLink;
-	} else {
-		const url = "https://apps.apple.com/app/parrylingo-language-learning/id1439733300";
-
-		if (navigator.clipboard) {
-			await navigator.clipboard.writeText(url);
-			showToast(t("copy_success"), 2000, "success");
-		} else {
-			unsecuredCopyToClipboard(url);
-			showToast(t("copy_success"), 2000, "success");
-		}
-	}
-};
 </script>
