@@ -47,7 +47,7 @@
 			</div>
 		</div>
 
-		<button
+		<!-- <button
 			class="block w-full bg-secondary py-2 px-6 text-white rounded-full font-semibold cursor-pointer"
 			@click="openSignInModal"
 		>
@@ -61,7 +61,7 @@
 			{{ $t("sign_up") }}
 		</button>
 
-		<AuthModal :open="authModal" :screen="authScreen" @close="closeAuthModal" />
+		<AuthModal :open="authModal" :screen="authScreen" @close="closeAuthModal" /> -->
 	</div>
 </template>
 
