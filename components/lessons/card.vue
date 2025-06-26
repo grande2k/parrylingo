@@ -49,7 +49,9 @@ const props = defineProps({
 });
 
 const lessonWords = computed(() => {
-	return `${props.lesson.words[0].titles[locale.value]} / ${props.lesson.words[1].titles[locale.value]}`;
+	const firstWord = getTitleForLang(props.lesson.words[0].titles, locale.value);
+	const secondWord = getTitleForLang(props.lesson.words[1].titles, locale.value);
+	return `${firstWord} / ${secondWord}`;
 });
 
 const { isFavourite, toggleFavourite } = useFavourites();
