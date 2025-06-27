@@ -3,7 +3,14 @@
 		<Header />
 
 		<div class="mb-8">
-			<template v-if="route.name === 'index' && !Object.keys(route.query).length">
+			<div
+				v-if="route.name === 'index' && !Object.keys(route.query).length"
+				ref="footerRef"
+				:class="[
+					'p-4 bg-[#f4f4f4] rounded-2xl transition-max-height duration-300 overflow-hidden relative',
+					!showAll ? 'max-h-48' : 'max-h-full',
+				]"
+			>
 				<h4 v-if="$t('footer_title')" class="whitespace-pre-line font-bold">
 					{{ $t("footer_title") }}
 				</h4>
@@ -11,7 +18,21 @@
 				<p v-if="$t('footer_text')" class="whitespace-pre-line text-sm">
 					{{ $t("footer_text") }}
 				</p>
-			</template>
+
+				<div
+					v-if="!showAll && isOverflowing"
+					class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#f4f4f4] to-transparent pointer-events-none rounded-b-2xl"
+				/>
+			</div>
+
+			<div v-if="isOverflowing" class="text-right mt-2">
+				<button
+					@click="showAll = !showAll"
+					class="text-primary cursor-pointer font-medium text-sm hover:underline"
+				>
+					{{ showAll ? $t("show_less") : $t("show_more") }}
+				</button>
+			</div>
 
 			<button
 				class="h-9 bg-gray-300 text-black font-semibold border border-black rounded-2xl py-1 px-3 flex items-center gap-2 mt-4 mx-auto cursor-pointer"
@@ -40,6 +61,10 @@
 const { t, locale } = useI18n();
 const { showToast } = useToast();
 const route = useRoute();
+
+const footerRef = ref(null);
+const isOverflowing = ref(false);
+const showAll = ref(false);
 
 watchEffect(() => {
 	useHead({
@@ -72,4 +97,13 @@ const handleLinkClick = async () => {
 		}
 	}
 };
+
+onMounted(async () => {
+	await nextTick();
+
+	const el = footerRef.value;
+	if (el && el.scrollHeight > el.clientHeight) {
+		isOverflowing.value = true;
+	}
+});
 </script>

@@ -15,6 +15,8 @@
 	"interface_languages": "Interface language",
 	"footer_title": "Bottom text",
 	"footer_text": "Bottom text",
+	"show_more": "Show more",
+	"show_less": "Show less",
 	"appstore_button": "Become author",
 	"appstore_search": "Search Appstore",
 	"copy_error": "Link not copied",
