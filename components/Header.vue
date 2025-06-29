@@ -11,6 +11,9 @@
 				<li class="header-link" :class="{ ignore: route.query.user_id }">
 					<nuxt-link to="/">{{ $t("lessons") }}</nuxt-link>
 				</li>
+				<li class="header-link" v-if="isAuthenticated">
+					<nuxt-link to="/authors">{{ $t("authors") }}</nuxt-link>
+				</li>
 				<li class="header-link">
 					<nuxt-link to="/favourites">{{ $t("favourites") }}</nuxt-link>
 				</li>
@@ -50,6 +53,8 @@ const route = useRoute();
 
 const profileStore = useProfileStore();
 const profile = computed(() => profileStore.profile);
+
+const isAuthenticated = computed(() => useCookie("access_token").value && profile.value);
 
 const showEditModal = ref(false);
 

@@ -49,6 +49,7 @@ const onSubmit = async () => {
 		showToast(t("login_success"), 2000, "success");
 		useCookie("access_token").value = data.value.access_token;
 		useCookie("refresh_token").value = data.value.refresh_token;
+		localStorage.setItem("auth_canceled", "true");
 		await navigateTo("/");
 		location.reload();
 	}

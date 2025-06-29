@@ -25,7 +25,10 @@
 				/>
 			</div>
 
-			<div v-if="isOverflowing" class="text-right mt-2">
+			<div
+				v-if="route.name === 'index' && !Object.keys(route.query).length && isOverflowing"
+				class="text-right mt-2"
+			>
 				<button
 					@click="showAll = !showAll"
 					class="text-primary cursor-pointer font-medium text-sm hover:underline"

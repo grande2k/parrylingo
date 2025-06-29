@@ -57,6 +57,7 @@ const onSubmit = async () => {
 		showToast(t("error"), 2000, "error");
 	} else {
 		showToast(t("signup_success"), 2000, "success");
+		localStorage.setItem("auth_canceled", "true");
 		emit("success");
 	}
 };
