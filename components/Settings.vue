@@ -47,21 +47,32 @@
 			</div>
 		</div>
 
-		<!-- <button
-			class="block w-full bg-secondary py-2 px-6 text-white rounded-full font-semibold cursor-pointer"
-			@click="openSignInModal"
-		>
-			{{ $t("sign_in") }}
-		</button>
+		<template v-if="useCookie('access_token').value">
+			<button
+				class="block bg-secondary py-2 px-6 text-white rounded-full font-semibold cursor-pointer mb-0 mt-6 mx-auto"
+				@click="logout"
+			>
+				{{ $t("log_out") }}
+			</button>
+		</template>
 
-		<button
-			class="block w-full bg-secondary py-2 px-6 text-white rounded-full font-semibold cursor-pointer mt-1"
-			@click="openSignUpModal"
-		>
-			{{ $t("sign_up") }}
-		</button>
+		<template v-else>
+			<button
+				class="block w-full bg-secondary py-2 px-6 text-white rounded-full font-semibold cursor-pointer"
+				@click="openSignInModal"
+			>
+				{{ $t("sign_in") }}
+			</button>
 
-		<AuthModal :open="authModal" :screen="authScreen" @close="closeAuthModal" /> -->
+			<button
+				class="block w-full bg-secondary py-2 px-6 text-white rounded-full font-semibold cursor-pointer mt-1 mb-0"
+				@click="openSignUpModal"
+			>
+				{{ $t("sign_up") }}
+			</button>
+		</template>
+
+		<AuthModal :open="authModal" :screen="authScreen" @close="closeAuthModal" />
 	</div>
 </template>
 
@@ -122,10 +133,18 @@ const closeAuthModal = () => {
 	emit("close");
 };
 
+const logout = async () => {
+	useCookie("access_token").value = null;
+	useCookie("refresh_token").value = null;
+	emit("close");
+	await navigateTo("/");
+	location.reload();
+};
+
 onMounted(async () => {
 	isLessonInterfaceDisabled.value = localStorage.getItem("interface_sound_disabled") === "true";
 	selectedLang.value = localStorage.getItem("interface_language") || i18n.locale.value;
-	nextTick(() => {
+	await nextTick(() => {
 		document.addEventListener("click", handleClickOutside);
 	});
 });

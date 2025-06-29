@@ -23,6 +23,14 @@
 			</button>
 		</div>
 	</div>
+
+	<AuthModal
+		:open="authModal"
+		@close="
+			authModal = false;
+			close();
+		"
+	/>
 </template>
 
 <script setup>
@@ -37,6 +45,7 @@ const props = defineProps({
 
 const emit = defineEmits(["close"]);
 const router = useRouter();
+const authModal = ref(false);
 
 const resultImagePath = computed(() => {
 	const correct = props.stepsStatus.filter(status => status === "correct").length;
@@ -59,13 +68,17 @@ const resultImagePath = computed(() => {
 });
 
 const close = () => {
-	emit("close");
-	if (props.isRoulette) {
-		useRouletteStore().reset();
+	if (localStorage.getItem("auth_canceled")) {
+		emit("close");
+		if (props.isRoulette) {
+			useRouletteStore().reset();
+		} else {
+			useSingleLessonStore().resetLesson();
+		}
+		router.push("/");
 	} else {
-		useSingleLessonStore().resetLesson();
+		authModal.value = true;
 	}
-	router.push("/");
 };
 </script>
 

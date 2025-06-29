@@ -4,8 +4,6 @@
 			Lessons by <strong>{{ lessonsStore.user.name }}</strong>
 		</p>
 
-		<language-picker />
-
 		<LoadingSpinner v-if="lessonsStore.loading" class="mx-auto mt-24" />
 
 		<div v-if="lessons.length && !lessonsStore.loading" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6">

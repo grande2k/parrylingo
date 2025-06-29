@@ -23,8 +23,13 @@ export async function useAPI<T>(endpoint: string | (() => string), options?: Use
 		options.query = filteredQuery;
 	}
 
+	const accessToken = useCookie("access_token").value;
+
 	return useFetch(fullUrl, {
 		...options,
+		headers: {
+			Authorization: `${accessToken}`,
+		},
 		server: false,
 		$fetch: api as typeof $fetch,
 	});

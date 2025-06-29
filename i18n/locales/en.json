@@ -25,6 +25,9 @@
 	"auth_text": "Login or signup to see your points",
 	"sign_in": "Sign in",
 	"sign_up": "Sign up",
+	"log_out": "Log out",
+	"save": "Save",
+	"update_profile_success": "Profile updated",
 	"cancel": "Cancel",
 	"email": "Email",
 	"name": "Name",
@@ -33,5 +36,7 @@
 	"passwords_dont_match": "Passwords don't match",
 	"fill_all_fields": "Fill all fields",
 	"user_not_found": "User not found",
+	"incorect_password": "Incorrect email or password",
+	"login_success": "Successfully logged in",
 	"signup_success": "Successfully signed up"
 }
