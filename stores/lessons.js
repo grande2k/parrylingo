@@ -3,14 +3,18 @@ import { ref } from "vue";
 
 export const useLessonsStore = defineStore("lessons", () => {
 	const lessons = ref(null);
+	const filters = ref({ search: "" });
 	const user = ref(null);
 	const loading = ref(true);
 
 	const fetchLessons = async lang_id_query => {
-		loading.value = true;
+		if (!lessons.value) loading.value = true;
 
 		const lang_id = lang_id_query || localStorage.getItem("language_id");
-		const { data, error } = await useAPI(`/lessons?language_id=${lang_id}&size=${100}`);
+		console.log(lang_id);
+		const { data, error } = await useAPI(
+			`/lessons?language_id=${lang_id}&size=${100}&search=${filters.value.search}`
+		);
 
 		loading.value = false;
 
@@ -42,5 +46,10 @@ export const useLessonsStore = defineStore("lessons", () => {
 		}
 	};
 
-	return { lessons, user, loading, fetchLessons, fetchUserLessons };
+	watch(
+		() => filters.value.search,
+		() => fetchLessons()
+	);
+
+	return { lessons, user, loading, filters, fetchLessons, fetchUserLessons };
 });

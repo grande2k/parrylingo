@@ -2,7 +2,7 @@
 	<div class="relative max-w-5xl w-full mx-auto py-4 px-4 sm:py-8" id="container">
 		<Header />
 
-		<div class="mb-8">
+		<div class="mb-6 sm:mb-8">
 			<div
 				v-if="route.name === 'index' && !Object.keys(route.query).length"
 				ref="footerRef"
