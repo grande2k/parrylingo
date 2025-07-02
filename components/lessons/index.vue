@@ -4,7 +4,7 @@
 			Lessons by <strong>{{ lessonsStore.user.name }}</strong>
 		</p>
 
-		<div class="flex justify-end">
+		<div class="flex justify-center sm:justify-end">
 			<SharedSearchInput v-model="lessonsStore.filters.search" />
 		</div>
 

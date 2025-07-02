@@ -72,7 +72,7 @@
 			</button>
 		</template>
 
-		<AuthModal :open="authModal" :screen="authScreen" @close="closeAuthModal" />
+		<AuthModal v-show="authModal" :open="authModal" :screen="authScreen" @close="closeAuthModal" />
 	</div>
 </template>
 
