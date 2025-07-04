@@ -4,7 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
 	site: {
 		url: "https://parrylingo.com",
-		title: "Parrylingo",
+		name: "Parrylingo",
 	},
 
 	compatibilityDate: "2024-11-01",
