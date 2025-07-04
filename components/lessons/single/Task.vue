@@ -52,6 +52,7 @@
 		<button
 			class="absolute -right-5 sm:-right-7 bottom-5 sm:bottom-8 size-10 sm:size-14 flex items-center justify-center border-4 border-white rounded-full text-white select-none cursor-pointer"
 			:class="isWordVisibilityDisabled ? 'bg-gray-400' : 'bg-secondary'"
+			:disabled="animateHint"
 			@click="toggleWordVisibility"
 		>
 			<IconPencil class="size-4 sm:size-6" />
@@ -60,6 +61,7 @@
 		<button
 			class="absolute right-5 sm:right-8 -bottom-5 sm:-bottom-7 size-10 sm:size-14 flex items-center justify-center border-4 border-white rounded-full text-white select-none"
 			:class="isLessonSoundDisabled ? 'bg-gray-400' : 'bg-secondary cursor-pointer'"
+			:disabled="animateHint"
 			@click="handlePlay"
 		>
 			<IconSound class="size-4 sm:size-6" />
@@ -68,6 +70,7 @@
 		<button
 			class="absolute -right-5 sm:-right-7 -bottom-5 sm:-bottom-7 size-10 sm:size-14 flex items-center justify-center border-4 border-white rounded-full text-white text-lg sm:text-2xl select-none cursor-pointer"
 			:class="tooltipsDisabled ? 'bg-gray-400' : 'bg-secondary'"
+			:disabled="animateHint"
 			@click="toggleTooltips"
 		>
 			?
@@ -79,7 +82,7 @@
 			v-for="word in singleLessonStore.shuffledWords"
 			:key="word.id"
 			@click="selectAnswer(word)"
-			:disabled="isAnswerProcessing"
+			:disabled="isAnswerProcessing || animateHint"
 			:class="['btn-answer relative', selectedWordId === word.id ? 'zoom' : '', getBorderClass(word.id)]"
 		>
 			<img :src="getStaticUrl(word.image)" class="size-32 sm:size-42 object-contain select-none" alt="" />
@@ -94,10 +97,38 @@
 		</button>
 	</div>
 
+	<Transition name="fade">
+		<div
+			v-if="hintReady && correctWord"
+			class="pointer-events-none fixed z-50"
+			:style="{
+				top: animateHint ? `${targetRect.y}px` : `${startRect.y}px`,
+				left: animateHint ? `${targetRect.x}px` : `${startRect.x}px`,
+				transform: 'translate(-50%, -50%)',
+				transition: 'top 1s ease, left 1s ease',
+			}"
+			@transitionend="handleHintReached"
+		>
+			<img
+				src="/images/finger.png"
+				class="size-24 sm:size-32 object-contain transition-transform duration-300"
+				:class="{ 'scale-90': animateHintZoom }"
+				alt="hint"
+			/>
+		</div>
+	</Transition>
+
 	<Result :open="showResultModal" :stepsStatus="singleLessonStore.stepsStatus" @close="showResultModal = false" />
 </template>
 
 <script setup>
+const props = defineProps({
+	showStart: {
+		type: Boolean,
+		default: false,
+	},
+});
+
 const singleLessonStore = useSingleLessonStore();
 
 const selectedWordId = ref(null);
@@ -191,6 +222,7 @@ const getTouchOrMouseEvent = e => {
 };
 
 const startDrag = e => {
+	if (animateHint.value) return;
 	if (e.target.tagName.toLowerCase() === "button" || e.target.closest("button")) return;
 	if (dragDisabled.value) return;
 
@@ -260,7 +292,89 @@ const getBorderClass = wordId => {
 	return "btn-border-default";
 };
 
+const showHint = ref(false);
+const animateHint = ref(false);
+const animateHintZoom = ref(false);
+
+const correctWord = computed(() => {
+	const lang = singleLessonStore.lesson.language.language_code;
+	return singleLessonStore.shuffledWords.find(
+		w => getTitleForLang(w.titles, lang) === getTitleForLang(currentWord.value.titles, lang)
+	);
+});
+
+const startRect = reactive({ x: 0, y: 0 });
+const targetRect = reactive({ x: 0, y: 0 });
+
+const hintReady = computed(() => {
+	return showHint.value && startRect.x !== 0 && startRect.y !== 0;
+});
+
 onMounted(() => {
 	tooltipsDisabled.value = localStorage.getItem("tooltips_disabled") === "true";
 });
+
+watch(
+	() => props.showStart,
+	isShown => {
+		if (!isShown) {
+			if (!localStorage.getItem("hint_shown")) {
+				showHint.value = true;
+
+				nextTick(() => {
+					const wordEl = draggable.value;
+					const answerBtns = document.querySelectorAll(".btn-answer");
+
+					if (!wordEl || !correctWord.value) return;
+
+					const wordBox = wordEl.getBoundingClientRect();
+					console.log(wordBox);
+					const correctBtn = Array.from(answerBtns).find(btn => {
+						const img = btn.querySelector("img");
+						return img?.getAttribute("src") === getStaticUrl(correctWord.value.image);
+					});
+
+					if (correctBtn) {
+						const targetBox = correctBtn.getBoundingClientRect();
+
+						startRect.x = wordBox.left + wordBox.width / 2;
+						startRect.y = wordBox.top + wordBox.height / 2;
+
+						targetRect.x = targetBox.left + targetBox.width / 2;
+						targetRect.y = targetBox.top + targetBox.height / 2;
+					}
+
+					console.log(targetRect);
+
+					setTimeout(() => {
+						animateHint.value = true;
+
+						setTimeout(() => {
+							selectAnswer(correctWord.value);
+							animateHintZoom.value = true;
+
+							setTimeout(() => {
+								showHint.value = false;
+								animateHint.value = false;
+								animateHintZoom.value = false;
+								localStorage.setItem("hint_shown", "true");
+							}, 700);
+						}, 1500);
+					}, 500);
+				});
+			}
+		}
+	}
+);
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 0.5s linear;
+}
+.fade-enter-from,
+.fade-leave-to {
+	opacity: 0;
+}
+</style>

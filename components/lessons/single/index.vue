@@ -27,7 +27,7 @@
 
 		<lessons-single-steps />
 
-		<lessons-single-task />
+		<lessons-single-task :show-start="showStart" />
 	</div>
 
 	<Teleport to="body">
