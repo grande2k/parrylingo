@@ -42,13 +42,13 @@ const startRoulette = () => {
 
 	nextTick(() => {
 		videoRef.value?.play().catch(() => {
-			router.push(`/roulette?count=${props.count}`);
+			router.push(`/roulette/?count=${props.count}`);
 		});
 	});
 };
 
 const onVideoEnd = () => {
 	audio.pause();
-	router.push(`/roulette?count=${props.count}`);
+	router.push(`/roulette/?count=${props.count}`);
 };
 </script>
