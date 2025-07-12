@@ -190,10 +190,22 @@ const selectAnswer = answer => {
 			selectedWordId.value = null;
 			answerStatus.value = null;
 
-			setTimeout(() => {
+			setTimeout(async () => {
 				if (singleLessonStore.current_step === 4) {
 					showResultModal.value = true;
 					if (!isSoundDisabled) resultAudio.play();
+					const token = useCookie("access_token");
+					if (token.value) {
+						const correctCount = singleLessonStore.stepsStatus.filter(s => s === "correct").length;
+						const { error } = await useAPI("/progress/lessons", {
+							method: "POST",
+							body: { lesson_id: singleLessonStore.lesson.id, stars: correctCount },
+						});
+
+						if (error.value) return;
+
+						useProfileStore().fetchProfile();
+					}
 				} else {
 					singleLessonStore.current_step += 1;
 					singleLessonStore.shuffleWords();

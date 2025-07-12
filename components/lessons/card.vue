@@ -1,7 +1,5 @@
 <template>
-	<article
-		class="relative flex flex-col rounded-xl sm:rounded-2xl border border-gray-300 overflow-hidden cursor-pointer"
-	>
+	<article class="relative flex flex-col rounded-xl sm:rounded-2xl border border-gray-300 cursor-pointer">
 		<button
 			class="absolute left-1/2 -translate-x-1/2 z-20 cursor-pointer w-6 h-7 sm:w-8 sm:h-9 flex pt-1.5 sm:pt-2 justify-center fav-btn"
 			:class="isFav ? 'bg-secondary' : 'bg-gray-400'"
@@ -38,6 +36,12 @@
 				<img :src="getStaticUrl(word.image)" class="size-16 sm:size-24 object-contain" alt="" />
 			</div>
 		</div>
+
+		<div class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 flex items-center justify-center">
+			<div v-for="(star, i) in stars" :key="star.id">
+				<img :src="star.img" alt="star" class="w-6" />
+			</div>
+		</div>
 	</article>
 </template>
 
@@ -53,6 +57,13 @@ const lessonWords = computed(() => {
 	const secondWord = getTitleForLang(props.lesson.words[1].titles, locale.value);
 	return `${firstWord} / ${secondWord}`;
 });
+
+const stars = computed(() =>
+	Array.from({ length: 4 }, (_, i) => ({
+		id: i,
+		img: i < props.lesson.progress_lesson_stars ? "/images/star-gold.png" : "/images/star-gray.png",
+	}))
+);
 
 const { isFavourite, toggleFavourite } = useFavourites();
 
