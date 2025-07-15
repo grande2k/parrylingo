@@ -37,7 +37,7 @@
 			</div>
 		</div>
 
-		<div class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 flex items-center justify-center">
+		<div v-if="showStars" class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 flex items-center justify-center">
 			<div v-for="(star, i) in stars" :key="star.id">
 				<img :src="star.img" alt="star" class="w-6" />
 			</div>
@@ -57,6 +57,8 @@ const lessonWords = computed(() => {
 	const secondWord = getTitleForLang(props.lesson.words[1].titles, locale.value);
 	return `${firstWord} / ${secondWord}`;
 });
+
+const showStars = computed(() => useCookie("access_token").value && useProfileStore().profile);
 
 const stars = computed(() =>
 	Array.from({ length: 4 }, (_, i) => ({

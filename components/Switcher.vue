@@ -24,6 +24,8 @@ const state =
 		? useState("lessonSoundDisabled", () => props.defaultValue)
 		: props.storageKey === "word_visibility_disabled"
 		? useState("wordVisibilityDisabled", () => props.defaultValue)
+		: props.storageKey === "timerDisabled"
+		? useState("timerDisabled", () => props.defaultValue)
 		: null;
 
 const enabled = ref(!props.defaultValue);

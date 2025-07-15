@@ -46,6 +46,7 @@ const router = useRouter();
 const route = useRoute();
 
 const lessonsStore = useLessonsStore();
+const languageStore = useLanguageStore();
 
 const languages = ref([]);
 const currentLanguage = ref("");
@@ -90,11 +91,14 @@ const fetchLanguages = async () => {
 		if (query) {
 			found = data.value.find(lang => lang.id === query);
 			currentLanguage.value = found?.id;
+			languageStore.language = found;
 		} else if (saved) {
 			found = data.value.find(lang => lang.id === saved);
 			currentLanguage.value = found?.id;
+			languageStore.language = found;
 		} else {
 			currentLanguage.value = data.value[0]?.id;
+			languageStore.language = data.value[0];
 		}
 
 		if (!query) localStorage.setItem("language_id", currentLanguage.value);
@@ -137,6 +141,7 @@ watch(currentLanguage, async (newLang, oldLang) => {
 
 		if (!lang_id_query) {
 			localStorage.setItem("language_id", newLang);
+			languageStore.language = languages.value.find(lang => lang.id === newLang);
 			lessonsStore.fetchLessons();
 		} else if (user_id_query) {
 			router.replace({ query: { user_id: user_id_query, language_id: newLang } });
@@ -144,6 +149,7 @@ watch(currentLanguage, async (newLang, oldLang) => {
 		} else {
 			router.replace({ query: null });
 			localStorage.setItem("language_id", newLang);
+			languageStore.language = languages.value.find(lang => lang.id === newLang);
 			lessonsStore.fetchLessons();
 		}
 	}

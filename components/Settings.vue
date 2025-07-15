@@ -21,6 +21,11 @@
 			<Switcher storageKey="word_visibility_disabled" :defaultValue="false" />
 		</div>
 
+		<div class="flex items-center justify-between gap-4">
+			<span class="text-sm text-black font-semibold">{{ $t("timer") }}: </span>
+			<Switcher storageKey="timerDisabled" :defaultValue="false" />
+		</div>
+
 		<div v-if="interfaces && interfaces.length">
 			<span class="text-sm text-black font-semibold"
 				>{{ $t("interface_languages") }}: {{ selectedInterface.name }}
@@ -91,6 +96,7 @@ const authScreen = ref(null);
 
 const isLessonSoundDisabled = useState("lessonSoundDisabled");
 const isWordVisibilityDisabled = useState("wordVisibilityDisabled");
+const timerDisabled = useState("timerDisabled");
 
 const handleClickOutside = event => {
 	if (!settingsRef.value) return;

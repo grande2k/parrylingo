@@ -49,6 +49,17 @@
 			{{ getTitleForLang(currentWord.titles, singleLessonStore.lesson.language.language_code, true) }}
 		</div>
 
+		<div
+			v-if="!timerDisabled"
+			class="absolute -right-5 sm:-right-6 -top-5 sm:-top-7 size-10 sm:size-12 bg-white flex items-center justify-center rounded-full select-none"
+			:class="[remainingSeconds > 3 ? 'text-secondary' : 'text-red-500']"
+		>
+			<IconTimer class="absoulute size-full" />
+			<span class="absolute top-[13px] sm:top-3.5 left-1/2 -translate-x-1/2 font-bold text-sm sm:text-lg">{{
+				remainingSeconds
+			}}</span>
+		</div>
+
 		<button
 			class="absolute -right-5 sm:-right-7 bottom-5 sm:bottom-8 size-10 sm:size-14 flex items-center justify-center border-4 border-white rounded-full text-white select-none cursor-pointer"
 			:class="isWordVisibilityDisabled ? 'bg-gray-400' : 'bg-secondary'"
@@ -142,7 +153,11 @@ const resultAudio = new Audio("/audio/result.mp3");
 
 const isLessonSoundDisabled = useState("lessonSoundDisabled");
 const isWordVisibilityDisabled = useState("wordVisibilityDisabled");
+const timerDisabled = useState("timerDisabled");
 const tooltipsDisabled = ref(false);
+
+const remainingSeconds = ref(10);
+const timerInterval = ref(null);
 
 const i18n = useI18n();
 
@@ -209,6 +224,12 @@ const selectAnswer = answer => {
 				} else {
 					singleLessonStore.current_step += 1;
 					singleLessonStore.shuffleWords();
+
+					if (!timerDisabled.value) {
+						clearInterval(timerInterval.value);
+						remainingSeconds.value = 10;
+						startTimerInterval();
+					}
 				}
 				isAnswerProcessing.value = false;
 				stopDragging();
@@ -322,14 +343,47 @@ const hintReady = computed(() => {
 	return showHint.value && startRect.x !== 0 && startRect.y !== 0;
 });
 
+const startTimerInterval = () => {
+	if (timerDisabled.value) return;
+
+	remainingSeconds.value = 10;
+	timerInterval.value = setInterval(() => {
+		remainingSeconds.value -= 1;
+		if (remainingSeconds.value <= 0) {
+			clearInterval(timerInterval.value);
+
+			if (singleLessonStore.current_step < 5) {
+				const lang = singleLessonStore.lesson.language.language_code;
+				const incorrect = singleLessonStore.shuffledWords.find(
+					w => getTitleForLang(w.titles, lang) !== getTitleForLang(currentWord.value.titles, lang)
+				);
+				selectAnswer(incorrect);
+			}
+		}
+	}, 1000);
+};
+
 onMounted(() => {
 	tooltipsDisabled.value = localStorage.getItem("tooltips_disabled") === "true";
+});
+
+onBeforeUnmount(() => {
+	clearInterval(timerInterval.value);
+	remainingSeconds.value = 10;
+});
+
+watch(timerDisabled, newValue => {
+	clearInterval(timerInterval.value);
+	remainingSeconds.value = 10;
+	if (!newValue) startTimerInterval();
 });
 
 watch(
 	() => props.showStart,
 	isShown => {
 		if (!isShown) {
+			if (!timerDisabled.value) startTimerInterval();
+
 			if (!localStorage.getItem("hint_shown")) {
 				showHint.value = true;
 
@@ -355,8 +409,6 @@ watch(
 						targetRect.x = targetBox.left + targetBox.width / 2;
 						targetRect.y = targetBox.top + targetBox.height / 2;
 					}
-
-					console.log(targetRect);
 
 					setTimeout(() => {
 						animateHint.value = true;

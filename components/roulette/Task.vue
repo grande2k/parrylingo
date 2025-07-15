@@ -12,7 +12,7 @@
 			ref="draggable"
 			class="relative bg-secondary border-6 border-white rounded-full tracking-wide leading-tight text-white text-center py-3 px-8 font-bold mx-auto touch-none select-none"
 			:class="[
-				wordLengthClass(getTitleForLang(currentWord.titles, rouletteStore.language.language_code, true)),
+				wordLengthClass(getTitleForLang(currentWord.titles, languageStore.language.language_code, true)),
 				{ 'cursor-grab': !dragDisabled },
 				{ 'text-[0px] size-16 !py-2 !px-2': isWordVisibilityDisabled },
 			]"
@@ -35,7 +35,18 @@
 			@mousedown="startDrag"
 			@touchstart="startDrag"
 		>
-			{{ getTitleForLang(currentWord.titles, rouletteStore.language.language_code, true) }}
+			{{ getTitleForLang(currentWord.titles, languageStore.language.language_code, true) }}
+		</div>
+
+		<div
+			v-if="!timerDisabled"
+			class="absolute -right-5 sm:-right-6 -top-5 sm:-top-7 size-10 sm:size-12 bg-white flex items-center justify-center rounded-full select-none"
+			:class="[remainingSeconds > 3 ? 'text-secondary' : 'text-red-500']"
+		>
+			<IconTimer class="absoulute size-full" />
+			<span class="absolute top-[13px] sm:top-3.5 left-1/2 -translate-x-1/2 font-bold text-sm sm:text-lg">{{
+				remainingSeconds
+			}}</span>
 		</div>
 
 		<button
@@ -92,7 +103,12 @@
 </template>
 
 <script setup>
+const props = defineProps({
+	showStart: { type: Boolean, default: false },
+});
+
 const rouletteStore = useRouletteStore();
+const languageStore = useLanguageStore();
 const selectedWordId = ref(null);
 const answerStatus = ref(null);
 const showResultModal = ref(false);
@@ -110,7 +126,11 @@ const currentWord = computed(() => {
 
 const isLessonSoundDisabled = useState("lessonSoundDisabled");
 const isWordVisibilityDisabled = useState("wordVisibilityDisabled");
+const timerDisabled = useState("timerDisabled");
 const tooltipsDisabled = ref(false);
+
+const remainingSeconds = ref(10);
+const timerInterval = ref(null);
 
 const i18n = useI18n();
 
@@ -129,7 +149,7 @@ const selectAnswer = answer => {
 	isAnswerProcessing.value = true;
 	selectedWordId.value = answer.id;
 
-	const lang_code = rouletteStore.language.language_code;
+	const lang_code = languageStore.language.language_code;
 
 	setTimeout(() => {
 		const isCorrect =
@@ -150,13 +170,31 @@ const selectAnswer = answer => {
 			selectedWordId.value = null;
 			answerStatus.value = null;
 
-			setTimeout(() => {
+			setTimeout(async () => {
 				if (rouletteStore.current_step >= total.value) {
 					showResultModal.value = true;
 					if (!isSoundDisabled) resultAudio.play();
+					const token = useCookie("access_token");
+					if (token.value) {
+						const correctCount = rouletteStore.stepsStatus.filter(s => s === "correct").length;
+						const { error } = await useAPI("/progress/roulette", {
+							method: "POST",
+							body: { stars: correctCount },
+						});
+
+						if (error.value) return;
+
+						useProfileStore().fetchProfile();
+					}
 				} else {
 					rouletteStore.current_step += 1;
 					rouletteStore.shuffle();
+
+					if (!timerDisabled.value) {
+						clearInterval(timerInterval.value);
+						remainingSeconds.value = 10;
+						startTimerInterval();
+					}
 				}
 				isAnswerProcessing.value = false;
 				stopDragging();
@@ -251,7 +289,45 @@ const getBorderClass = wordId => {
 	return "btn-border-default";
 };
 
+const startTimerInterval = () => {
+	if (timerDisabled.value) return;
+
+	remainingSeconds.value = 10;
+	timerInterval.value = setInterval(() => {
+		remainingSeconds.value -= 1;
+		if (remainingSeconds.value <= 0) {
+			clearInterval(timerInterval.value);
+
+			if (rouletteStore.current_step < 5) {
+				const lang = languageStore.language.language_code;
+				const incorrect = rouletteStore.shuffledWords.find(
+					w => getTitleForLang(w.titles, lang) !== getTitleForLang(currentWord.value.titles, lang)
+				);
+				selectAnswer(incorrect);
+			}
+		}
+	}, 1000);
+};
+
 onMounted(() => {
 	tooltipsDisabled.value = localStorage.getItem("tooltips_disabled") === "true";
 });
+
+onBeforeUnmount(() => {
+	clearInterval(timerInterval.value);
+	remainingSeconds.value = 10;
+});
+
+watch(timerDisabled, newValue => {
+	clearInterval(timerInterval.value);
+	remainingSeconds.value = 10;
+	if (!newValue) startTimerInterval();
+});
+
+watch(
+	() => props.showStart,
+	isShown => {
+		if (!isShown && !timerDisabled.value) startTimerInterval();
+	}
+);
 </script>

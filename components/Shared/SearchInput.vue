@@ -4,7 +4,7 @@
 			type="text"
 			:value="localValue"
 			@input="onInput"
-			placeholder="Seach..."
+			:placeholder="`${$t('search')}...`"
 			class="w-full border border-gray-300 rounded-md py-2 px-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
 		/>
 

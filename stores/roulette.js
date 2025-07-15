@@ -1,15 +1,25 @@
 export const useRouletteStore = defineStore("roulette", () => {
 	const words = ref([]);
-	const language = ref(null);
 	const loading = ref(false);
 	const current_step = ref(1);
 	const stepsStatus = ref([]);
 	const shuffledWords = ref([]);
 	const audio = ref(null);
 
-	const loadRoulette = async (language_id, count) => {
+	const loadRoulette = async count => {
 		loading.value = true;
-		const { data, error } = await useAPI(`/lessons/roulette?language_id=${language_id}&count=${count}`);
+		let endpoint;
+
+		console.log(useRoute().query.source);
+
+		if (useRoute().query.source === "favourites") {
+			endpoint = `/favorites/lessons/roulette?count=${count}`;
+		} else {
+			endpoint = `/lessons/roulette?count=${count}`;
+		}
+
+		const { data, error } = await useAPI(endpoint);
+
 		loading.value = false;
 
 		if (error.value) {
@@ -17,8 +27,7 @@ export const useRouletteStore = defineStore("roulette", () => {
 			return;
 		}
 
-		language.value = data.value.language;
-		words.value = data.value?.words || [];
+		words.value = data.value;
 		stepsStatus.value = Array(count).fill(null);
 		current_step.value = 1;
 		const start_audio_url = getStaticUrl(words.value[0]?.audio);
@@ -27,7 +36,6 @@ export const useRouletteStore = defineStore("roulette", () => {
 	};
 
 	const reset = () => {
-		language.value = null;
 		words.value = [];
 		current_step.value = 1;
 		stepsStatus.value = [];
@@ -79,7 +87,6 @@ export const useRouletteStore = defineStore("roulette", () => {
 	});
 
 	return {
-		language,
 		words,
 		loading,
 		audio,

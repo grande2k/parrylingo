@@ -8,15 +8,16 @@
 			</button>
 
 			<nuxt-link
-				:to="`/?language_id=${rouletteStore.language.id}`"
+				v-if="languageStore.language"
+				:to="`/?language_id=${languageStore.language.id}`"
 				class="text-center underline underline-offset-4"
 			>
-				{{ rouletteStore.language.name }}
+				{{ languageStore.language.name }}
 			</nuxt-link>
 		</div>
 
 		<RouletteSteps />
-		<RouletteTask />
+		<RouletteTask :showStart="showStart" />
 	</div>
 
 	<Teleport to="body">
@@ -34,6 +35,7 @@
 <script setup>
 const route = useRoute();
 const rouletteStore = useRouletteStore();
+const languageStore = useLanguageStore();
 const showStart = ref(false);
 
 const startRoulette = () => {
@@ -46,11 +48,10 @@ const goBack = () => {
 };
 
 onMounted(async () => {
-	const langId = localStorage.getItem("language_id");
 	const count = Number(route.query.count) || 4;
 
 	rouletteStore.reset();
-	await rouletteStore.loadRoulette(langId, count);
+	await rouletteStore.loadRoulette(count);
 	showStart.value = true;
 });
 </script>

@@ -41,7 +41,7 @@
 			<IconSettings class="size-4" />
 		</button>
 
-		<Settings v-if="showSettings" @close="showSettings = false" />
+		<Settings v-show="showSettings" @close="showSettings = false" />
 
 		<AuthProfileEditModal :open="showEditModal" @close="closeEditModal" />
 	</header>
