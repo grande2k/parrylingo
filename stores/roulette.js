@@ -10,8 +10,6 @@ export const useRouletteStore = defineStore("roulette", () => {
 		loading.value = true;
 		let endpoint;
 
-		console.log(useRoute().query.source);
-
 		if (useRoute().query.source === "favourites") {
 			endpoint = `/favorites/lessons/roulette?count=${count}`;
 		} else {
@@ -30,9 +28,17 @@ export const useRouletteStore = defineStore("roulette", () => {
 		words.value = data.value;
 		stepsStatus.value = Array(count).fill(null);
 		current_step.value = 1;
-		const start_audio_url = getStaticUrl(words.value[0]?.audio);
-		audio.value = new Audio(start_audio_url);
 		shuffle();
+
+		const lang = useLanguageStore().language.language_code;
+
+		if (!words.value[0]?.audio[lang]) {
+			audio.value = null;
+			return;
+		}
+
+		const start_audio_url = getStaticUrl(words.value[0]?.audio[lang]);
+		audio.value = new Audio(start_audio_url);
 	};
 
 	const reset = () => {
@@ -78,10 +84,20 @@ export const useRouletteStore = defineStore("roulette", () => {
 		if (!words.value?.length) return;
 
 		const word = words.value[newStep - 1];
+		const lang = useLanguageStore().language.language_code;
+		const url = word.audio[lang];
 
-		if (word?.audio) {
-			audio.value.src = getStaticUrl(word.audio);
-			audio.value.load();
+		if (!url) {
+			audio.value = null;
+			return;
+		} else {
+			if (!audio.value) {
+				audio.value = new Audio(getStaticUrl(url));
+			} else {
+				audio.value.src = getStaticUrl(url);
+				audio.value.load();
+			}
+
 			playAudio();
 		}
 	});

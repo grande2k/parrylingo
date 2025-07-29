@@ -26,9 +26,17 @@ export const useSingleLessonStore = defineStore("single-lesson", () => {
 			console.error("Error fetching single lesson");
 		} else {
 			lesson.value = data.value || null;
-			const start_audio_url = getStaticUrl(lesson.value?.words?.[0]?.audio);
-			audio.value = new Audio(start_audio_url);
 			if (lesson.value?.words?.length) shuffleWords();
+
+			const lang = useLanguageStore().language.language_code;
+
+			if (!lesson.value?.words?.[0]?.audio[lang]) {
+				audio.value = null;
+				return;
+			}
+
+			const start_audio_url = getStaticUrl(lesson.value?.words?.[0]?.audio[lang]);
+			audio.value = new Audio(start_audio_url);
 		}
 	};
 
@@ -66,12 +74,22 @@ export const useSingleLessonStore = defineStore("single-lesson", () => {
 
 		const wordIndex = newStep % 2 === 1 ? 0 : 1;
 		const word = lesson.value.words[wordIndex];
+		const lang = useLanguageStore().language.language_code;
+		const url = word.audio[lang];
 
-		if (word?.audio) {
-			audio.value.src = getStaticUrl(word.audio);
-			audio.value.load();
-			playAudio();
+		if (!url) {
+			audio.value = null;
+			return;
 		}
+
+		if (!audio.value) {
+			audio.value = new Audio(getStaticUrl(url));
+		} else {
+			audio.value.src = getStaticUrl(url);
+			audio.value.load();
+		}
+
+		playAudio();
 	});
 
 	return {

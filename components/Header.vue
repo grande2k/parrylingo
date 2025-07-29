@@ -7,7 +7,7 @@
 		<language-picker />
 
 		<nav class="mt-4 sm:mt-6">
-			<ul class="flex items-start justify-center gap-8">
+			<ul class="flex items-start flex-wrap justify-center gap-8">
 				<li class="header-link" :class="{ ignore: route.query.user_id }">
 					<nuxt-link to="/">{{ $t("lessons") }}</nuxt-link>
 				</li>
@@ -16,6 +16,9 @@
 				</li>
 				<li class="header-link">
 					<nuxt-link to="/favourites">{{ $t("favourites") }}</nuxt-link>
+				</li>
+				<li class="header-link" v-if="isAuthenticated">
+					<nuxt-link to="/leaderboard">{{ $t("leaderboard") }}</nuxt-link>
 				</li>
 			</ul>
 		</nav>

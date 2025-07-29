@@ -179,7 +179,7 @@ const selectAnswer = answer => {
 						const correctCount = rouletteStore.stepsStatus.filter(s => s === "correct").length;
 						const { error } = await useAPI("/progress/roulette", {
 							method: "POST",
-							body: { stars: correctCount },
+							body: { stars: correctCount, language_id: languageStore.language.id },
 						});
 
 						if (error.value) return;

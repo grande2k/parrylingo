@@ -21,9 +21,7 @@
 			ref="draggable"
 			class="relative bg-secondary border-6 border-white rounded-full tracking-wide leading-tight text-white text-center py-3 px-8 font-bold mx-auto touch-none select-none"
 			:class="[
-				wordLengthClass(
-					getTitleForLang(currentWord.titles, singleLessonStore.lesson.language.language_code, true)
-				),
+				wordLengthClass(getTitleForLang(currentWord.titles, languageStore.language.language_code, true)),
 				{ 'cursor-grab': !dragDisabled },
 				{ 'text-[0px] size-16 !py-2 !px-2': isWordVisibilityDisabled },
 			]"
@@ -46,7 +44,7 @@
 			@mousedown="startDrag"
 			@touchstart="startDrag"
 		>
-			{{ getTitleForLang(currentWord.titles, singleLessonStore.lesson.language.language_code, true) }}
+			{{ getTitleForLang(currentWord.titles, languageStore.language.language_code, true) }}
 		</div>
 
 		<div
@@ -141,6 +139,7 @@ const props = defineProps({
 });
 
 const singleLessonStore = useSingleLessonStore();
+const languageStore = useLanguageStore();
 
 const selectedWordId = ref(null);
 const answerStatus = ref(null);
@@ -184,7 +183,7 @@ const selectAnswer = answer => {
 	isAnswerProcessing.value = true;
 	selectedWordId.value = answer.id;
 
-	const lang_code = singleLessonStore.lesson.language.language_code;
+	const lang_code = languageStore.language.language_code;
 
 	setTimeout(() => {
 		const isCorrect =
@@ -214,7 +213,11 @@ const selectAnswer = answer => {
 						const correctCount = singleLessonStore.stepsStatus.filter(s => s === "correct").length;
 						const { error } = await useAPI("/progress/lessons", {
 							method: "POST",
-							body: { lesson_id: singleLessonStore.lesson.id, stars: correctCount },
+							body: {
+								lesson_id: singleLessonStore.lesson.id,
+								language_id: languageStore.language.id,
+								stars: correctCount,
+							},
 						});
 
 						if (error.value) return;
@@ -330,7 +333,7 @@ const animateHint = ref(false);
 const animateHintZoom = ref(false);
 
 const correctWord = computed(() => {
-	const lang = singleLessonStore.lesson.language.language_code;
+	const lang = languageStore.language.language_code;
 	return singleLessonStore.shuffledWords.find(
 		w => getTitleForLang(w.titles, lang) === getTitleForLang(currentWord.value.titles, lang)
 	);
@@ -353,7 +356,7 @@ const startTimerInterval = () => {
 			clearInterval(timerInterval.value);
 
 			if (singleLessonStore.current_step < 5) {
-				const lang = singleLessonStore.lesson.language.language_code;
+				const lang = languageStore.language.language_code;
 				const incorrect = singleLessonStore.shuffledWords.find(
 					w => getTitleForLang(w.titles, lang) !== getTitleForLang(currentWord.value.titles, lang)
 				);

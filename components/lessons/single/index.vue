@@ -8,17 +8,18 @@
 			</button>
 
 			<nuxt-link
-				:to="`/?language_id=${singleLessonStore.lesson.language.id}`"
+				v-if="langStore.language"
+				:to="`/?language_id=${langStore.language.id}`"
 				class="text-center underline underline-offset-4"
 			>
-				{{ singleLessonStore.lesson.language.name }}
+				{{ langStore.language.name }}
 			</nuxt-link>
 
 			<p v-if="singleLessonStore.lesson.user">/</p>
 
 			<nuxt-link
 				v-if="singleLessonStore.lesson.user"
-				:to="`/?user_id=${singleLessonStore.lesson.user.id}&language_id=${singleLessonStore.lesson.language.id}`"
+				:to="`/?user_id=${singleLessonStore.lesson.user.id}&language_id=${langStore.language.id}`"
 				class="text-center underline underline-offset-4"
 			>
 				{{ singleLessonStore.lesson.user.name }}
@@ -43,6 +44,7 @@
 </template>
 
 <script setup>
+const langStore = useLanguageStore();
 const singleLessonStore = useSingleLessonStore();
 const showStart = ref(false);
 

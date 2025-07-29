@@ -11,7 +11,6 @@ export const useLessonsStore = defineStore("lessons", () => {
 		if (!lessons.value) loading.value = true;
 
 		const lang_id = lang_id_query || localStorage.getItem("language_id");
-		console.log(lang_id);
 		const { data, error } = await useAPI(
 			`/lessons?language_id=${lang_id}&size=${100}&search=${filters.value.search}`
 		);
