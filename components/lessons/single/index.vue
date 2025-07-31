@@ -17,13 +17,13 @@
 
 			<p v-if="singleLessonStore.lesson.user">/</p>
 
-			<nuxt-link
+			<p
 				v-if="singleLessonStore.lesson.user"
-				:to="`/?user_id=${singleLessonStore.lesson.user.id}&language_id=${langStore.language.id}`"
-				class="text-center underline underline-offset-4"
+				@click="openUserLessons"
+				class="text-center underline underline-offset-4 cursor-pointer"
 			>
 				{{ singleLessonStore.lesson.user.name }}
-			</nuxt-link>
+			</p>
 		</div>
 
 		<lessons-single-steps />
@@ -55,6 +55,14 @@ const startLesson = () => {
 
 const goBack = () => {
 	navigateTo("/");
+};
+
+const openUserLessons = async () => {
+	console.log(langStore.language, singleLessonStore.lesson);
+	const user_id = singleLessonStore.lesson.user.id;
+	const lang_id = langStore.language?.id;
+	if (!user_id || !lang_id) return;
+	await navigateTo(`/?user_id=${user_id}&language_id=${lang_id}`);
 };
 
 onMounted(async () => {

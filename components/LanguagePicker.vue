@@ -75,7 +75,7 @@ const handleClickOutside = event => {
 	}
 };
 
-const fetchLanguages = async () => {
+const fetchLanguages = async (load_lessons = false) => {
 	const { data, error } = await useAPI("/languages?with_lessons=true");
 
 	if (error.value) {
@@ -103,25 +103,7 @@ const fetchLanguages = async () => {
 
 		if (!query) localStorage.setItem("language_id", currentLanguage.value);
 
-		await lessonsStore.fetchLessons(query);
-	}
-};
-
-const fetcUserLanguages = async () => {
-	const user_id = route.query.user_id;
-
-	if (!user_id) return;
-
-	const { data, error } = await useAPI(`/user/${user_id}/languages`);
-
-	if (error.value) {
-		console.error("Error fetching user languages");
-	} else {
-		languages.value = data.value;
-
-		const lang_id_query = route.query.language_id;
-		const found = data.value.find(lang => lang.id === lang_id_query);
-		currentLanguage.value = found?.id;
+		if (load_lessons) await lessonsStore.fetchLessons(query);
 	}
 };
 
@@ -157,16 +139,17 @@ watch(currentLanguage, async (newLang, oldLang) => {
 
 watch(
 	() => route.query,
-	() => lessonsStore.fetchLessons(),
+	newQuery => {
+		if (!newQuery.user_id) lessonsStore.fetchLessons();
+	},
 	{ deep: true }
 );
 
 onMounted(async () => {
 	if (route.query.user_id) {
-		fetcUserLanguages();
-		lessonsStore.fetchUserLessons(route.query.user_id, route.query.language_id);
-	} else {
 		fetchLanguages();
+	} else {
+		fetchLanguages(true);
 	}
 
 	await nextTick(() => {

@@ -4,7 +4,8 @@
 			Lessons by <strong>{{ lessonsStore.user.name }}</strong>
 		</p>
 
-		<div class="flex justify-center sm:justify-end">
+		<div v-if="!route.query.user_id" class="flex flex-col sm:flex-row items-center justify-between gap-2">
+			<CategoriesFilter />
 			<SharedSearchInput v-model="lessonsStore.filters.search" />
 		</div>
 
@@ -48,5 +49,11 @@ const lessons = computed(() => {
 	if (showLongRoulette) output.push({ type: "roulette", count: 18 });
 
 	return output;
+});
+
+onMounted(() => {
+	if (route.query.user_id) {
+		lessonsStore.fetchUserLessons(route.query.user_id, route.query.language_id);
+	}
 });
 </script>

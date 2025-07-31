@@ -28,7 +28,7 @@ export const useSingleLessonStore = defineStore("single-lesson", () => {
 			lesson.value = data.value || null;
 			if (lesson.value?.words?.length) shuffleWords();
 
-			const lang = useLanguageStore().language.language_code;
+			const lang = useLanguageStore().language?.language_code;
 
 			if (!lesson.value?.words?.[0]?.audio[lang]) {
 				audio.value = null;

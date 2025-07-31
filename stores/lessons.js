@@ -3,7 +3,7 @@ import { ref } from "vue";
 
 export const useLessonsStore = defineStore("lessons", () => {
 	const lessons = ref(null);
-	const filters = ref({ search: "" });
+	const filters = ref({ search: null, topic_id: null });
 	const user = ref(null);
 	const loading = ref(true);
 
@@ -11,9 +11,13 @@ export const useLessonsStore = defineStore("lessons", () => {
 		if (!lessons.value) loading.value = true;
 
 		const lang_id = lang_id_query || localStorage.getItem("language_id");
-		const { data, error } = await useAPI(
-			`/lessons?language_id=${lang_id}&size=${100}&search=${filters.value.search}`
-		);
+		const { data, error } = await useAPI(`/lessons?language_id=${lang_id}`, {
+			query: {
+				size: 100,
+				search: filters.value.search,
+				topic_id: filters.value.topic_id,
+			},
+		});
 
 		loading.value = false;
 
@@ -33,7 +37,13 @@ export const useLessonsStore = defineStore("lessons", () => {
 			return;
 		}
 
-		const { data, error } = await useAPI(`/lessons/user/${user_id}/language/${lang_id}?size=${100}`);
+		const { data, error } = await useAPI(`/lessons/user/${user_id}/language/${lang_id}`, {
+			query: {
+				size: 100,
+				search: filters.value.search,
+				topic_id: filters.value.topic_id,
+			},
+		});
 
 		loading.value = false;
 
@@ -47,6 +57,11 @@ export const useLessonsStore = defineStore("lessons", () => {
 
 	watch(
 		() => filters.value.search,
+		() => fetchLessons()
+	);
+
+	watch(
+		() => filters.value.topic_id,
 		() => fetchLessons()
 	);
 
