@@ -12,7 +12,7 @@
 			<label v-if="defaultAll" class="option">
 				<input type="checkbox" :checked="isAllSelected" @change="toggleOption(null)" />
 				<span class="checkmark"></span>
-				<span>All</span>
+				<span>{{ $t("all") }}</span>
 			</label>
 
 			<label v-for="option in props.options" :key="option.value" class="option">
@@ -50,7 +50,7 @@ const isAllSelected = computed(() => props.defaultAll && selected.value === null
 const label = computed(() => {
 	if (isAllSelected.value) return t("all");
 	if (selected.value) return props.options.find(o => o.value === selected.value).label;
-	return "Select";
+	return t("select");
 });
 
 const toggleDropdown = () => {
